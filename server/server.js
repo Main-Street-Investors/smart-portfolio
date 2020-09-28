@@ -5,7 +5,7 @@ const path = require('path');
 
 // Server logic
 
-// Serves static files
+// Serves static bundle files
 app.use('/dist', express.static(path.join(__dirname, '../dist')));
 
 // Serves HTML at base path
