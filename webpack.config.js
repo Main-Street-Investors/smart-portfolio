@@ -43,10 +43,15 @@ module.exports = {
   },
   devServer: {
     port: 8080,
-    // contentBase: path.resolve(__dirname, '/dist'),
-    // publicPath: '/dist/',
+    contentBase: path.resolve(__dirname, '/dist'),
+    publicPath: '/',
+    historyApiFallback: true,
     proxy: {
       '/api/**': {
+        target: 'http://localhost:3000',
+        secure: false,
+      },
+      '/dist': {
         target: 'http://localhost:3000',
         secure: false,
       },
@@ -56,8 +61,9 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.html',
+      inject: false,
     }),
-    new MiniCssExtractPlugin() 
+    new MiniCssExtractPlugin()
   ],
   node: {
     fs: 'empty',
