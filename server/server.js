@@ -4,6 +4,8 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const apiRouter = require('./routers/api');
 
+const PORT = 3000;
+
 // Body parsers & cookie parser
 app.use(express.json());
 app.use(express.urlencoded());
@@ -23,4 +25,6 @@ app.get('/', (req, res) => {
 app.use('/api', apiRouter);
 
 // Server will listen on port 3000
-app.listen(3000);
+app.listen(PORT);
+
+console.log('Server listening at port', PORT);

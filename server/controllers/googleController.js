@@ -1,13 +1,13 @@
-const { google } = require('googleapis');
+const { google } = require('googleapis')
 
 const googleController = {};
 
-googleController.OAuth = async (req, res, next) => {
+googleController.OAuth = (req, res, next) => {
 
   const oauth2Client = new google.auth.OAuth2(
-    '231739595536-t9fshjinu1djuiu6mu31410um2q7gf1a.apps.googleusercontent.com',
-    '1dxP3-vAFCESbebjlMw6SaSL',
-    'http://localhost:8080/api/login/G'
+    '329953103684-fd3u5obuomsrh1dmbeu7eekif92f0m17.apps.googleusercontent.com',
+    'cJ4dyZO7s3Pp0HQhyOHvCftF',
+    'http://localhost:8080/api/googleSuccess'
   );
 
   const scopes = [
@@ -30,22 +30,19 @@ googleController.OAuth = async (req, res, next) => {
 googleController.afterConsent = (req, res, next) => {
 
   const oauth2Client = new google.auth.OAuth2(
-    '231739595536-t9fshjinu1djuiu6mu31410um2q7gf1a.apps.googleusercontent.com',
-    '1dxP3-vAFCESbebjlMw6SaSL',
-    'http://localhost:8080/api/login/G'
+    '329953103684-fd3u5obuomsrh1dmbeu7eekif92f0m17.apps.googleusercontent.com',
+    'cJ4dyZO7s3Pp0HQhyOHvCftF',
+    'http://localhost:8080/api/googleSuccess'
   );
 
   oauth2Client.getToken(req.query.code)
     .then(data => {
       const { tokens } = data;
       oauth2Client.setCredentials(tokens);
-      res.locals.provider = 'google';
       res.locals.token = tokens.id_token;
       return next();
     })
-    .catch(err => {
-      if (err) console.log('afterConsent .catch block: ', err)
-    })
+    .catch(err => console.log('Error occurred with generating token from Google OAuth: ', err))
 };
 
 module.exports = googleController;
