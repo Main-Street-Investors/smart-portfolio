@@ -13,12 +13,12 @@ function Portfolio() {
     <div>
       <h1>Portfolio Page</h1>
       <Switch>
-      <Route path={`${match.path}/:portfolioID`}>
-        <Placeholder />
-      </Route>
-      <Route path={match.path}>
-        <h3>Please select a portfolio.</h3>
-      </Route>
+        <Route path={`${match.path}/:portfolioID`}>
+          <Placeholder />
+        </Route>
+        <Route path={match.path}>
+          <h3>Please select a portfolio.</h3>
+        </Route>
       </Switch>
     </div>
   );
