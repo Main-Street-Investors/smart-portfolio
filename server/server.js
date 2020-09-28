@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+const PORT = 3000;
+
 const path = require('path');
 
 // Server logic
@@ -14,4 +16,6 @@ app.get('/', (req, res) => {
 });
 
 // Server will listen on port 3000
-app.listen(3000);
+app.listen(PORT);
+
+console.log('Server listening at port', PORT);
