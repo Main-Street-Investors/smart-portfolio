@@ -4,10 +4,18 @@ const googleController = {};
 
 googleController.OAuth = (req, res, next) => {
 
+  let port;
+
+  if (process.env.NODE_ENV === 'production') {
+    port = 3000;  
+  } else {
+    port = 8080;
+  };
+
   const oauth2Client = new google.auth.OAuth2(
     '329953103684-fd3u5obuomsrh1dmbeu7eekif92f0m17.apps.googleusercontent.com',
     'cJ4dyZO7s3Pp0HQhyOHvCftF',
-    'http://localhost:8080/api/googleSuccess'
+    `http://localhost:${port}/api/googleSuccess`
   );
 
   const scopes = [
@@ -29,10 +37,17 @@ googleController.OAuth = (req, res, next) => {
 
 googleController.afterConsent = (req, res, next) => {
 
+  let port;
+  if (process.env.NODE_ENV === 'production') {
+    port = 3000;  
+  } else {
+    port = 8080;
+  }  
+
   const oauth2Client = new google.auth.OAuth2(
     '329953103684-fd3u5obuomsrh1dmbeu7eekif92f0m17.apps.googleusercontent.com',
     'cJ4dyZO7s3Pp0HQhyOHvCftF',
-    'http://localhost:8080/api/googleSuccess'
+    `http://localhost:${port}/api/googleSuccess`
   );
 
   oauth2Client.getToken(req.query.code)

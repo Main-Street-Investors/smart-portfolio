@@ -13,18 +13,26 @@ app.use(cookieParser());
 
 // Server logic
 
-// Serves static files
-app.use('/dist', express.static(path.join(__dirname, '../dist')));
-
-// Serves HTML at base path
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../index.html'));
+// Serves bundle
+app.use('*/bundle.js', (req, res) => {
+  console.log('Serving Bundle');
+  res.sendFile(path.join(__dirname, '../dist/bundle.js'));
 });
 
-// Api router
+// Serves assets
+app.use('*/assets', (req, res) => {
+  console.log('Serving Static Asset');
+  express.static(path.join(__dirname, '../assets'));
+});
+
+// API endpoint router
 app.use('/api', apiRouter);
 
-// Server will listen on port 3000
-app.listen(PORT);
+// Serves HTML
+app.get('/*', (req, res) => {
+  console.log('Serving HTML');
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
 
-console.log('Server listening at port', PORT);
+// Server will listen on port 3000
+app.listen(PORT, () => console.log('Server listening at port', PORT));
