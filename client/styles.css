@@ -1,3 +1,37 @@
 body {
-  background-color: pink;
+  font-family: 'Open Sans Condensed';
+  text-align: center;
+  background-color: #0c1d25;
+}
+
+.logo {
+  margin: 150px auto 150px;
+  font-size: 150px;
+  font-family: 'Henny Penny', cursive;
+  color: #146fa0;
+}
+
+div {
+  color: #bcc5ca;
+}
+
+button {
+  width: auto;
+  height: 30px;
+  letter-spacing: 1px;
+  line-height: 30px;
+  padding: 0 15px;
+  margin: 5px 10px;
+  font-size: 15px;
+  background-color: rgb(128, 124, 120);
+  color: white;
+  text-transform: uppercase;
+  font-weight: normal;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+input {
+  margin: 10px;
 }
