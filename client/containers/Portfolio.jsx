@@ -61,6 +61,7 @@ function PortfolioManager() {
   let match = useRouteMatch();
   let { portfolioID } = useParams();
   const [loading, setLoading] = useState(false);
+  const [portID, setPortID] = useState(portfolioID);
 
   const [showNewPortfolio, setShowNewPortfolio] = useState(false);
   const [showNewStock, setNewStock] = useState(false);
@@ -73,7 +74,7 @@ function PortfolioManager() {
 
   return (
     <div>
-      <div>Examining portfolio {portfolioID}</div>
+      <h3>Holdings of {portID}</h3>
       {loading && <div className="mainLoadingContainer">
         <Spinner animation="border" role="status">
           <span className="sr-only">Loading...</span>
@@ -112,10 +113,10 @@ function PortfolioManager() {
       <Button className="tableButtons" variant="outline-info" onClick={() => {
         setSellStock(true);
       }}>Sell Stock</Button>
-      <Link to={`${match.path}/1/history`}><Button className="tableButtons" variant="outline-info">View History</Button></Link>
+      <Link to={`${portID}/history`}><Button className="tableButtons" variant="outline-info">View History</Button></Link>
 
       </div>}
-      <Modal show={showNewPortfolio} onHide={handleNewPortfolioClose}>
+      <Modal centered show={showNewPortfolio} onHide={handleNewPortfolioClose}>
         <Modal.Header closeButton>
           <Modal.Title>Name your Portfolio</Modal.Title>
         </Modal.Header>
@@ -131,7 +132,7 @@ function PortfolioManager() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showNewStock} onHide={handleNewStockClose}>
+      <Modal centered show={showNewStock} onHide={handleNewStockClose}>
         <Modal.Header closeButton>
           <Modal.Title>New Stock</Modal.Title>
         </Modal.Header>
@@ -155,7 +156,7 @@ function PortfolioManager() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <Modal show={showSellStock} onHide={handleSellStockClose}>
+      <Modal centered show={showSellStock} onHide={handleSellStockClose}>
         <Modal.Header closeButton>
           <Modal.Title>Sell Stock</Modal.Title>
         </Modal.Header>

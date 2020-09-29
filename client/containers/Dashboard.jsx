@@ -59,7 +59,7 @@ class Dashboard extends Component {
               <Row>
                 <Col lg={10}>
                   <Row className="centerColumn">
-                    <h3 id="chartTitle">Aggregated Stocks for Portfolio {this.state.portfolioNum}</h3>
+                    <h3 id="chartTitle">Aggregated Stocks for {this.state.portfolioNum}</h3>
                   </Row>
                   <Row className="centerColumn">
                     <div id="chartContainer">
