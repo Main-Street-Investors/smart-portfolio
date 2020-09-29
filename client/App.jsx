@@ -8,6 +8,7 @@ import {
   Switch,
   Route
 } from "react-router-dom";
+import Signup from './containers/Signup.jsx';
 
 // Create App component
 class App extends Component {
@@ -20,6 +21,7 @@ class App extends Component {
       <BrowserRouter>
         <Switch>
           <Route path='/login' exact component={Login} />
+          <Route path='/signup' exact component={Signup} />
           <Route path='/dashboard' exact component={Dashboard} />
           <Route path='/portfolio' component={Portfolio} />
           <Route path='/' exact component={LandingPage} />

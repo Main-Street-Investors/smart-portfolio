@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class LandingPage extends Component {
   constructor(props) {
@@ -12,8 +13,12 @@ class LandingPage extends Component {
       <div>
       <button type="button">Google login</button>
       <div>
+        <Link to="/Login">
       <button type="button">Smart Portfolio Login</button>
+      </Link>
+      <Link to="/signup">
         <button type="button">Smart Portfolio Signup</button>
+        </Link>
         </div>
       </div>
     </div>
