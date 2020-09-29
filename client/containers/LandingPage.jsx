@@ -16,7 +16,9 @@ class LandingPage extends Component {
         <Link to="/Login">
       <button type="button">Smart Portfolio Login</button>
       </Link>
+      <Link to="/signup">
         <button type="button">Smart Portfolio Signup</button>
+        </Link>
         </div>
       </div>
     </div>
