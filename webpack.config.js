@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   entry: './client/index.js',
   output: {
+    publicPath: '/',
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
@@ -43,15 +44,11 @@ module.exports = {
   },
   devServer: {
     port: 8080,
-    contentBase: path.resolve(__dirname, '/dist'),
+    // contentBase: path.resolve(__dirname, '/dist'),
     publicPath: '/',
     historyApiFallback: true,
     proxy: {
       '/api/**': {
-        target: 'http://localhost:3000',
-        secure: false,
-      },
-      '/dist': {
         target: 'http://localhost:3000',
         secure: false,
       },
@@ -61,7 +58,6 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: './index.html',
-      // inject: false,
     }),
     new MiniCssExtractPlugin()
   ],
