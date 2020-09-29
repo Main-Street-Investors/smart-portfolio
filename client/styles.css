@@ -110,3 +110,7 @@ input {
 a:hover {
   text-decoration: none !important;
 }
+
+.modal-dialog {
+  width: 1300px; /* New width for default modal */
+}
