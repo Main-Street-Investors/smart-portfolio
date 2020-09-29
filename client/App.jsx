@@ -23,6 +23,7 @@ class App extends Component {
           <Route path='/login' exact component={Login} />
           <Route path='/signup' exact component={Signup} />
           <Route path='/dashboard' exact component={Dashboard} />
+          <Route path='/landingpage' exact component={LandingPage} />
           <Route path='/portfolio' component={Portfolio} />
           <Route path='/' exact component={LandingPage} />
           <Route path='/' render={() => <div>404</div>} />

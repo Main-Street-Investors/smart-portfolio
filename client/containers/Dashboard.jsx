@@ -54,6 +54,7 @@ class Dashboard extends Component {
                 </Link>
               </div>
             </Col>
+            
             <Col lg={10}>
               <Row>
                 <Col lg={10}>
