@@ -13,6 +13,7 @@ app.use(cookieParser());
 
 // Server logic
 
+<<<<<<< HEAD
 // Serves bundle
 app.use('*/bundle.js', (req, res) => {
   console.log('Serving Bundle');
@@ -27,6 +28,10 @@ app.use('*/assets', (req, res) => {
 
 // API endpoint router
 app.use('/api', apiRouter);
+=======
+// Serves static bundle files
+app.use('/dist', express.static(path.join(__dirname, '../dist')));
+>>>>>>> backend-minchan
 
 // Serves HTML
 app.get('/*', (req, res) => {
