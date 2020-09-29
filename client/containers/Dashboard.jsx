@@ -35,9 +35,9 @@ class Dashboard extends Component {
         {!this.state.loading &&
         <Container fluid={true}>
           <Row>
-            <Col lg={2} id="dashNav">
+            <Col lg={2} id="nav">
               <div>
-                <Link to="/portfolio">
+                <Link to="/portfolio/1">
                   <Button variant="outline-info" block>
                     Manage Your Portfolios
                   </Button>
@@ -54,7 +54,7 @@ class Dashboard extends Component {
                 </Link>
               </div>
             </Col>
-            
+
             <Col lg={10}>
               <Row>
                 <Col lg={10}>
