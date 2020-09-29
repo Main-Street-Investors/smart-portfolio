@@ -2,6 +2,7 @@ body {
   font-family: 'Open Sans Condensed';
   text-align: center;
   background-color: #0c1d25;
+  color: #bcc5ca;
 }
 
 .logo {
@@ -11,9 +12,7 @@ body {
   color: #146fa0;
 }
 
-div {
-  color: #bcc5ca;
-}
+/*
 
 button {
   width: auto;
@@ -30,8 +29,84 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
-}
+} */
 
 input {
   margin: 10px;
+}
+
+.mainLoadingContainer {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#dashNav {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dashNavBtn {
+  margin-top: 0.5rem;
+}
+
+#logoutDiv {
+  margin-top: 10px;
+}
+
+.centerColumn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#chartContainer {
+  -moz-box-shadow: 0 8px 6px -6px #bcc5ca;
+  -webkit-box-shadow: 0 8px 6px -6px #bcc5ca;
+  box-shadow: 0 8px 6px -6px #bcc5ca;
+  border-radius: 10px;
+  border: 1px solid #bcc5ca;
+  margin-bottom: 20px;
+}
+
+.chartRangeButton {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+#glance {
+  padding: 1rem;
+  border: 1px dashed #bcc5ca;
+  border-radius: 10px;
+  height: 100%;
+  -moz-box-shadow: 0 8px 6px -6px #bcc5ca;
+  -webkit-box-shadow: 0 8px 6px -6px #bcc5ca;
+  box-shadow: 0 8px 6px -6px #bcc5ca;
+}
+
+.glanceInfo {
+  border: 0.5px solid #b81752;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.glanceInfoText {
+  margin: 0;
+}
+
+.topPad {
+  height: 5vh;
+}
+
+.btn a {
+  color: inherit !important;
+}
+
+a:hover {
+  text-decoration: none !important;
 }
