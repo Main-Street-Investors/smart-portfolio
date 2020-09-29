@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const path = require('path');
 const googleController = require('../controllers/googleController');
 const cookieController = require('../controllers/cookieController');
+const loginController = require('../controllers/loginController');
 
 // Google OAuth Login
 
@@ -14,10 +14,29 @@ router.get('/googleLogin',
 
 router.get('/googleSuccess',
   googleController.afterConsent,
-  cookieController.setGoogleCookie,
+  loginController.verifyGoogleUser,
+  cookieController.setCookie,
   (req, res) => {
-    // Need to change this based on agreed-on functionality
-    return res.redirect('/');
+    return res.redirect('/dashboard');
   });
+
+// Regular Login
+router.get('/regularLogin',
+  // googleController.afterConsent,
+  // loginController.verifyGoogleUser,
+  // cookieController.setCookie,
+  (req, res) => {
+    return res.redirect('/dashboard');
+  });
+  
+// Regular Signup
+router.post('/regularSignup',
+  loginController.regularSignup,
+  // loginController.verifyGoogleUser,
+  // cookieController.setCookie,
+  (req, res) => {
+    return res.redirect('/dashboard');
+  });
+
 
 module.exports = router;

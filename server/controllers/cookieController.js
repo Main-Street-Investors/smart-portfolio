@@ -1,7 +1,12 @@
 const cookieController = {};
 
-cookieController.setGoogleCookie = (req, res, next) => {
-  res.cookie('token', res.locals.token, { httpOnly: true });
+cookieController.setCookie = (req, res, next) => {
+  res.cookie('user', res.locals.username, { httpOnly: true });
+  
+  if (res.locals.token) {
+    res.cookie('token', res.locals.token, { httpOnly: true });
+  }
+  
   return next();
 };
 
