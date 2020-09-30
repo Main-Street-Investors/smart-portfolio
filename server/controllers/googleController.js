@@ -57,7 +57,12 @@ googleController.afterConsent = (req, res, next) => {
       res.locals.token = tokens.id_token;
       return next();
     })
-    .catch(err => console.log('Error occurred with generating token from Google OAuth: ', err))
+    .catch(err => {
+    return next({
+      log: `Error occurred with generating token from Google OAuth: ${err}`,
+      message: { err: "An error occurred during Google OAuth process." }
+    })
+  })
 };
 
 module.exports = googleController;

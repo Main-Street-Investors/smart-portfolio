@@ -1,4 +1,3 @@
-const { firebase } = require('googleapis/build/src/apis/firebase');
 const fetch = require('node-fetch'); 
 const db = require("../models/models.js");
 
