@@ -20,7 +20,7 @@ loginController.verifyGoogleUser = (req, res, next) => {
 
   const getSelectedUserQuery = `SELECT * FROM users WHERE username=$1`;
   const getSelectedUserVal = [email];
-  
+
   const createUserStr = `INSERT INTO users
                          (username, hashed_password, email, created_by_google)
                          VALUES ($1, $2, $3, $4)
@@ -34,7 +34,7 @@ loginController.verifyGoogleUser = (req, res, next) => {
     } else if (data.rows.length && data.rows[0].created_by_google) {
           return next();
     } else {
-      // User does not exist  
+      // User does not exist
       db.query(createUserStr, createUserVal)
         .then(res => { return next(); })
         .catch(err => {
@@ -56,22 +56,22 @@ loginController.verifyGoogleUser = (req, res, next) => {
 loginController.regularSignup = (req, res, next) => {
 
     const { username, password } = req.body;
-    
+
     bcrypt.hash(password, saltFactor, (err, hash) => {
       if (err) {
         return next({
           log: `Error occurred with b-crypting process: ${err}`,
           message: { err: "An error occurred when encrypting the password." }
         });
-        
+
       } else {
         const createUserQueryStr = `INSERT INTO users
                                     (username, hashed_password, email, created_by_google)
                                     VALUES ($1, $2, $3, $4)
                                     RETURNING username`;
-    
+
         const createUserValue =  [username, hash, '', false];
-    
+
         db.query(createUserQueryStr, createUserValue)
         .then(data => {
             // console.log('data rows: ', data.rows);
@@ -83,7 +83,7 @@ loginController.regularSignup = (req, res, next) => {
                 log: `Error occurred with creating a new user in the database: ${err}`,
                 message: { err: "An error occurred when creating a new user in database." }
             });
-        });     
+        });
       }
     });
 }
@@ -93,7 +93,7 @@ loginController.checkDuplicateUser = (req, res, next) => {
 
   const getSelectedUserQuery = `SELECT * FROM users WHERE username=$1`;
   const getSelectedUserVal = [username];
-  
+
   db.query(getSelectedUserQuery, getSelectedUserVal)
   .then(data => {
     if(data.rows.length) {
@@ -110,12 +110,16 @@ loginController.checkDuplicateUser = (req, res, next) => {
 }
 
 loginController.verifyUser = (req, res, next) => {
-  
+
   const { username, password } = req.body;
 
   const getUserQuery = `SELECT * FROM users WHERE username=$1`;
   const getUserVal = [username];
-  
+
+  console.log('body', req.body);
+  console.log('username', username);
+  console.log('password', password);
+
   db.query(getUserQuery, getUserVal)
   .then(data => {
     let passwordInDB = data.rows[0].hashed_password;
@@ -127,7 +131,7 @@ loginController.verifyUser = (req, res, next) => {
         return next({
           log: `Error occurred with verifying user's password in the database : ${err}`,
           message: { err: "An error occurred while verifying user in database." }
-        });  
+        });
       }
     });
   })
@@ -137,6 +141,7 @@ loginController.verifyUser = (req, res, next) => {
       message: { err: "An error occurred while checking if user exists in database." }
     });
   })
+
 }
 
 module.exports = loginController;

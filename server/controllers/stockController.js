@@ -1,4 +1,4 @@
-const fetch = require('node-fetch'); 
+const fetch = require('node-fetch');
 const db = require("../models/models.js");
 
 const stockController = {};
@@ -15,16 +15,21 @@ const stockController = {};
 stockController.getSoldShares = (req, res, next) => {
 
   const username = req.cookies.user;
+<<<<<<< HEAD
   
   let getSoldSharesQuery = `SELECT ss.portfolio_id, p.name, s.ticker_name, s.date_purchased, ss.sell_price, ss.date_sold, ss.number_shares
+=======
+
+  let getSoldSharesQuery = `SELECT ss.portfolio_id, s.ticker_name, s.date_purchased, ss.sell_price, ss.date_sold, ss.number_shares
+>>>>>>> master
                             FROM users AS u
                             FULL OUTER JOIN portfolio AS p ON u._id = p.user_id
-                            FULL OUTER JOIN shares AS s ON p._id = s.portfolio_id 
+                            FULL OUTER JOIN shares AS s ON p._id = s.portfolio_id
                             FULL OUTER JOIN soldshares AS ss ON ss.shares_id = s._id AND ss.portfolio_id = p._id
                             WHERE u.username = $1 AND ss._id > 0;`;
-  
+
   let getSoldSharesQueryValue = [username];
-  
+
   db.query(getSoldSharesQuery, getSoldSharesQueryValue)
   .then(data => {
     res.locals.soldShares = data.rows;
@@ -36,7 +41,7 @@ stockController.getSoldShares = (req, res, next) => {
       message: { err: "An error occurred when querying database for sold shares." }
     })
   })
-  
+
 }
 
 stockController.getCurrentShares = (req, res, next) => {
@@ -50,7 +55,7 @@ stockController.getCurrentShares = (req, res, next) => {
                                 WHERE u.username = $1;`;
 
   let getCurrentSharesQueryValue = [username];
-  
+
   db.query(getCurrentSharesQuery, getCurrentSharesQueryValue)
   .then(data => {
     res.locals.currentShares = data.rows;
@@ -66,7 +71,7 @@ stockController.getCurrentShares = (req, res, next) => {
 }
 
 stockController.getIEXData = (req, res, next) => {
-  
+
   const currPortfolio = res.locals.currentShares;
 
   let stockStr = '';
@@ -105,6 +110,7 @@ stockController.getIEXData = (req, res, next) => {
 }
 
 stockController.packageIEXData = (req, res, next) => {
+<<<<<<< HEAD
   
   if (res.locals.rawPortfolio) {
     const rawPortfolio = res.locals.rawPortfolio;
@@ -137,6 +143,31 @@ stockController.packageIEXData = (req, res, next) => {
   } else {
     
     return next();
+=======
+  const rawPortfolio = res.locals.rawPortfolio;
+
+  // Container for historical share price information and holdings
+  const sharePriceData = [];
+
+  // Iterating through performance data of current portfolio holdings
+  for (const key of Object.keys(rawPortfolio)) {
+
+    const companyObj = {};
+    companyObj.ticker = key;
+    const dataContainer = [];
+
+    rawPortfolio[key].chart.forEach(dailyObj => {
+      const { date, close } = dailyObj
+      const dailyContainer = {};
+      dailyContainer.x = date;
+      dailyContainer.y = close;
+      dataContainer.push(dailyContainer);
+    })
+
+    companyObj.data = dataContainer;
+    sharePriceData.push(companyObj);
+  }
+>>>>>>> master
 
   }
     
@@ -148,7 +179,7 @@ stockController.finalizeData = (req, res, next) => {
 
   // Isolating the unique portfolio IDs
   const portfolioIDs = [];
-  
+
   currentPortfolio.forEach(obj => {
     if (!portfolioIDs.includes(obj.portfolio_id)) {
       portfolioIDs.push(obj.portfolio_id);
@@ -158,7 +189,7 @@ stockController.finalizeData = (req, res, next) => {
   const portfolioInfo = {};
 
   portfolioIDs.forEach(id => {
-    
+
     const stockDetails = [];
 
     currentPortfolio.forEach(stock => {
@@ -169,10 +200,10 @@ stockController.finalizeData = (req, res, next) => {
         eachStockObj.number_shares = stock.number_shares;
         stockDetails.push(eachStockObj);
       }
-    })    
+    })
     const portfolioName = 'portfolio' + id.toString();
     portfolioInfo[portfolioName] = stockDetails;
-    
+
   })
 
   // Adjust the portfolioInfo object to reflect shares that have been sold
@@ -205,7 +236,7 @@ stockController.finalizeData = (req, res, next) => {
   const IEXData = res.locals.IEXData;
 
   for (const key in portfolioInfo) {
-    
+
     const portfolioContainer = {};
     portfolioContainer.portfolio = key;
 
@@ -225,9 +256,27 @@ stockController.finalizeData = (req, res, next) => {
 
     if (portfolioInfo[key][0].ticker === null) {
 
+<<<<<<< HEAD
       portfolioContainer.data = null
       
     } else {
+=======
+    portfolioInfo[key].forEach(stock => {
+      const filteredIEX = IEXData.filter(IEXStock => IEXStock.ticker === stock.ticker);
+      const stockPerformance = [];
+
+      filteredIEX[0].data.forEach(dailyData => {
+        const dailyObj = {};
+        dailyObj.x = dailyData.x;
+
+        if (dailyData.x >= stock.date_purchased) {
+          dailyObj.y = (dailyData.y * stock.number_shares);
+          dailyObj.z = stock.number_shares;
+        } else {
+          dailyObj.y = 0;
+          dailyObj.z = 0;
+        }
+>>>>>>> master
 
       // Adjusting the IEX data for current shares held
       const stockData = [];
@@ -278,7 +327,7 @@ stockController.finalizeData = (req, res, next) => {
     consolidatedInformation.push(portfolioContainer);
 
   }
-  
+
   const finalConsolidatedObj = {};
   finalConsolidatedObj.category = 'consolidated'
   const finalData = [];
@@ -309,8 +358,12 @@ stockController.finalizeData = (req, res, next) => {
   res.locals.chartData = consolidatedInformation;
   return next();
 }
+<<<<<<< HEAD
   
 module.exports = stockController;
+=======
+
+>>>>>>> master
 
 // SCRATCH NOTES
 
@@ -323,7 +376,7 @@ module.exports = stockController;
     //               ]
     // SoldShares: {tickername: CODESMITH, soldprice: xxx, date sold, numbershares: 10}, aggregatedInfo: [currentShares + soldShares]]
 
-  /* 
+  /*
   APIInfo: [
     {
       category: consolidated
@@ -341,7 +394,7 @@ module.exports = stockController;
   */
 
   // From IEX
-  /* 
+  /*
     [
       {
         ticker: AAPL
@@ -355,7 +408,7 @@ module.exports = stockController;
   */
 
   // create an object for each stock they own across all their portfolios, with dates as keys, and shares they own as of that date as the values
-  
+
   // Logic to understand
   // let hasSold = false;
   // hasSold = true;
@@ -364,9 +417,9 @@ module.exports = stockController;
   //   '2020-09-01': 1,
   //   '2020-09-02': 1,
   // }
-  
+
   // Portfolio 1 data
-  /* 
+  /*
     [
       {
         ticker: consolidated
@@ -380,7 +433,7 @@ module.exports = stockController;
         ticker: FB
         data: [filter this information for how long they have owned the stock; always going to have 3 months of data] [{x: 2020-09-10, y:200(number of shares * closed price on that day), z: No. of shares they own}]
       }
-    ], 
+    ],
   */
 
  // [ {ticker: consolidated, data: [{}, {}, {}] }, { ticker: fb, data: [{x: date, y: price}, {}, {}] }, { ticker: aapl, data: [{}, {}, {}] }  ]

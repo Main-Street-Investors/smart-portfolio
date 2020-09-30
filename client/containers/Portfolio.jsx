@@ -20,7 +20,7 @@ function Portfolio() {
   let match = useRouteMatch();
   let location = useLocation();
 
-  
+
   const [historical, setHistorical] = useState(false);
 
   const [showNewPortfolio, setNewPortfolio] = useState(false);
@@ -28,8 +28,16 @@ function Portfolio() {
 
   if (!historical && location.pathname.match(/history/g)) setHistorical(true);
 
+  const [loading, setLoading] = useState(false);
+
   return (
     <div>
+      {loading && <div className="mainLoadingContainer">
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </div>}
+    {!loading && <div>
       <div className="topPad"></div>
       <Container fluid={true}>
         <Row style={{height: '90vh'}}>
@@ -84,13 +92,13 @@ function Portfolio() {
           </Button>
         </Modal.Footer>
       </Modal>
+    </div>}
     </div>
   );
 }
 
 function PortfolioManager(props) {
   let { portfolioID } = useParams();
-  const [loading, setLoading] = useState(false);
   const [portID, setPortID] = useState(portfolioID);
 
   const [showRenamePortfolio, setRenamePortfolio] = useState(false);
@@ -106,12 +114,6 @@ function PortfolioManager(props) {
   return (
     <div>
       <h3>Holdings of {portID}</h3>
-      {loading && <div className="mainLoadingContainer">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>}
-      {!loading &&
       <div>
         <div className="tableContainer">
           <Table striped bordered hover variant="dark">
@@ -157,7 +159,7 @@ function PortfolioManager(props) {
           }}>View History</Button>
         </Link>
 
-      </div>}
+      </div>
       <Modal centered show={showRenamePortfolio} onHide={handleRenamePortfolioClose}>
         <Modal.Header closeButton>
           <Modal.Title>Name your Portfolio</Modal.Title>
@@ -249,18 +251,10 @@ function PortfolioManager(props) {
 const PortfolioHistory = () => {
   let { portfolioID } = useParams();
   const [portID, setPortID] = useState(portfolioID);
-  const [loading, setLoading] = useState(false);
 
   return(
     <div>
       <h3>History of {portID}</h3>
-      {loading && <div className="mainLoadingContainer">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>}
-      {!loading &&
-      <div>
         <div className="tableContainer">
           <Table striped bordered hover variant="dark">
             <thead>
@@ -285,7 +279,6 @@ const PortfolioHistory = () => {
             </tbody>
           </Table>
         </div>
-      </div>}
     </div>
   )
 }
