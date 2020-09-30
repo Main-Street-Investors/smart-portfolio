@@ -16,7 +16,7 @@ app.use(cookieParser());
 // Serves bundle
 app.use('*/bundle.js', (req, res) => {
   console.log('Serving Bundle');
-  res.sendFile(path.join(__dirname, '../dist/bundle.js'));
+  return res.sendFile(path.join(__dirname, '../dist/bundle.js'));
 });
 
 // Serves assets
@@ -31,7 +31,13 @@ app.use('/api', apiRouter);
 // Serves HTML
 app.get('/*', (req, res) => {
   console.log('Serving HTML');
-  res.sendFile(path.join(__dirname, '../dist/index.html'));
+  return res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+// Global error Handler for now
+app.use((err, req, res, next) => {
+  // Fix error code if time is available
+  return res.status(401).send(err.message);
 });
 
 // Server will listen on port 3000

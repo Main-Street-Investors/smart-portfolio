@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const path = require('path');
 const googleController = require('../controllers/googleController');
 const cookieController = require('../controllers/cookieController');
+const loginController = require('../controllers/loginController');
+const stockController = require('../controllers/stockController');
 
 // Google OAuth Login
 
@@ -14,10 +15,51 @@ router.get('/googleLogin',
 
 router.get('/googleSuccess',
   googleController.afterConsent,
-  cookieController.setGoogleCookie,
+  loginController.verifyGoogleUser,
+  cookieController.setCookie,
   (req, res) => {
-    // Need to change this based on agreed-on functionality
-    return res.redirect('/');
+    return res.redirect('/dashboard');
+  });
+
+// Regular Login
+router.get('/regularLogin',
+  loginController.verifyUser,
+  cookieController.setCookie,
+  (req, res) => {
+    return res.redirect('/dashboard');
+  });
+  
+// Regular Signup
+router.post('/regularSignup',
+  loginController.checkDuplicateUser,
+  loginController.regularSignup,
+  cookieController.setCookie,
+  (req, res) => {
+    return res.redirect('/dashboard');
+  });
+
+// Obtain historical share prices
+router.get('/getPortfolio',
+  stockController.getSoldShares,
+  stockController.getCurrentShares,
+  stockController.getIEXData,
+  stockController.packageIEXData,
+  stockController.finalizeData,
+  (req, res) => {
+    
+    let chartData = res.locals.chartData
+    let IEXData = res.locals.IEXData
+    let currentShares = res.locals.currentShares
+    let soldShares = res.locals.soldShares
+    
+    const responseObj = {
+      chartData,
+      IEXData,
+      currentShares,
+      soldShares,
+    }
+    
+    return res.json(responseObj);
   });
 
 module.exports = router;
