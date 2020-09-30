@@ -1,7 +1,6 @@
 const fetch = require('node-fetch'); 
 const db = require("../models/models.js");
 
-
 const stockController = {};
 
 // Requesting Portfolio flow when user clicks assigned portfolio
@@ -13,12 +12,11 @@ const stockController = {};
   // 4. save those data to redis server
   // 5. send data back to the client as JSON
 
-
 stockController.getSoldShares = (req, res, next) => {
 
   const username = req.cookies.user;
   
-  let getSoldSharesQuery = `SELECT ss.portfolio_id, s.ticker_name, s.date_purchased, ss.sell_price, ss.date_sold, ss.number_shares
+  let getSoldSharesQuery = `SELECT ss.portfolio_id, p.name, s.ticker_name, s.date_purchased, ss.sell_price, ss.date_sold, ss.number_shares
                             FROM users AS u
                             FULL OUTER JOIN portfolio AS p ON u._id = p.user_id
                             FULL OUTER JOIN shares AS s ON p._id = s.portfolio_id 
@@ -29,7 +27,6 @@ stockController.getSoldShares = (req, res, next) => {
   
   db.query(getSoldSharesQuery, getSoldSharesQueryValue)
   .then(data => {
-    // console.log(data.rows);
     res.locals.soldShares = data.rows;
     return next();
   })
@@ -46,7 +43,7 @@ stockController.getCurrentShares = (req, res, next) => {
 
   const username = req.cookies.user;
 
-  const getCurrentSharesQuery = `SELECT p._id AS portfolio_id, s._id, s.ticker_name, s.date_purchased, s.price, s.number_shares
+  const getCurrentSharesQuery = `SELECT p._id AS portfolio_id, p.name, s._id, s.ticker_name, s.date_purchased, s.price, s.number_shares
                                 FROM users AS u
                                 FULL OUTER JOIN portfolio AS p ON u._id = p.user_id
                                 FULL OUTER JOIN shares AS s ON p._id = s.portfolio_id
@@ -56,7 +53,6 @@ stockController.getCurrentShares = (req, res, next) => {
   
   db.query(getCurrentSharesQuery, getCurrentSharesQueryValue)
   .then(data => {
-    // console.log(data.rows);
     res.locals.currentShares = data.rows;
     return next();
   })
@@ -68,7 +64,6 @@ stockController.getCurrentShares = (req, res, next) => {
   })
 
 }
-
 
 stockController.getIEXData = (req, res, next) => {
   
@@ -83,56 +78,69 @@ stockController.getIEXData = (req, res, next) => {
     }
   });
 
-  const APIKey = 'pk_e3201d281b63472aa79bf9958474e707'
-  const url = `https://cloud.iexapis.com/stable/stock/market/batch?symbols=${stockStr}&types=chart&chartCloseOnly=true&range=3m&token=${APIKey}`
+  if (stockStr !== '') {
 
-  fetch(url, {
-    method: 'GET',
-  })
-  .then(response => response.json())
-  .then(response => {
-    res.locals.rawPortfolio = response;
-    return next();
-  })
-  .catch(err => {
-    return next({
-      log: `Error occurred with stockController.getIEXData middleware and the IEX API fetch: ${err}`,
-      message: { err: "An error occurred when fetching porfolio statistics from external API." }
+    const APIKey = 'pk_e3201d281b63472aa79bf9958474e707'
+    const url = `https://cloud.iexapis.com/stable/stock/market/batch?symbols=${stockStr}&types=chart&chartCloseOnly=true&range=3m&token=${APIKey}`
+  
+    fetch(url, {
+      method: 'GET',
     })
-  });
+    .then(response => response.json())
+    .then(response => {
+      res.locals.rawPortfolio = response;
+      return next();
+    })
+    .catch(err => {
+      return next({
+        log: `Error occurred with stockController.getIEXData middleware and the IEX API fetch: ${err}`,
+        message: { err: "An error occurred when fetching porfolio statistics from external API." }
+      })
+    });
+
+  } else {
+    return next();
+  }
 
 }
 
 stockController.packageIEXData = (req, res, next) => {
-  const rawPortfolio = res.locals.rawPortfolio;
   
-  // Container for historical share price information and holdings
-  const sharePriceData = [];
+  if (res.locals.rawPortfolio) {
+    const rawPortfolio = res.locals.rawPortfolio;
   
-  // Iterating through performance data of current portfolio holdings
-  for (const key of Object.keys(rawPortfolio)) {
+    // Container for historical share price information and holdings
+    const sharePriceData = [];
     
-    const companyObj = {};
-    companyObj.ticker = key;
-    const dataContainer = [];
+    // Iterating through performance data of current portfolio holdings
+    for (const key of Object.keys(rawPortfolio)) {
+      
+      const companyObj = {};
+      companyObj.ticker = key;
+      const dataContainer = [];
+      
+      rawPortfolio[key].chart.forEach(dailyObj => {
+        const { date, close } = dailyObj
+        const dailyContainer = {};
+        dailyContainer.x = date;
+        dailyContainer.y = close;
+        dataContainer.push(dailyContainer);
+      })
+      
+      companyObj.data = dataContainer;
+      sharePriceData.push(companyObj);
+    }
+  
+    res.locals.IEXData = sharePriceData;
+    return next();
     
-    rawPortfolio[key].chart.forEach(dailyObj => {
-      const { date, close } = dailyObj
-      const dailyContainer = {};
-      dailyContainer.x = date;
-      dailyContainer.y = close;
-      dataContainer.push(dailyContainer);
-    })
+  } else {
     
-    companyObj.data = dataContainer;
-    sharePriceData.push(companyObj);
+    return next();
+
   }
-
-  res.locals.IEXData = sharePriceData;
-  return next();
+    
 }
-
-
 
 stockController.finalizeData = (req, res, next) => {
 
@@ -199,51 +207,74 @@ stockController.finalizeData = (req, res, next) => {
   for (const key in portfolioInfo) {
     
     const portfolioContainer = {};
-    portfolioContainer.category = key;
+    portfolioContainer.portfolio = key;
 
-    const stockData = [];
+    // Figures out what the portfolio name is
+    const portfolioID = Number(key[key.length - 1]);
+    const currShares = res.locals.currentShares;
+    let portfolioName;
 
-    portfolioInfo[key].forEach(stock => {
-      const filteredIEX = IEXData.filter(IEXStock => IEXStock.ticker === stock.ticker);
-      const stockPerformance = [];
+    for (let i = 0; i < currShares.length; i++) {
+      if (currShares[i].portfolio_id === portfolioID) {
+        portfolioName = currShares[i].name;
+        break;
+      }
+    }
+
+    portfolioContainer.portfolioName = portfolioName;
+
+    if (portfolioInfo[key][0].ticker === null) {
+
+      portfolioContainer.data = null
       
-      filteredIEX[0].data.forEach(dailyData => {
-        const dailyObj = {};
-        dailyObj.x = dailyData.x;
+    } else {
+
+      // Adjusting the IEX data for current shares held
+      const stockData = [];
+
+      portfolioInfo[key].forEach(stock => {
+        const filteredIEX = IEXData.filter(IEXStock => IEXStock.ticker === stock.ticker);
+        const stockPerformance = [];
         
-        if (dailyData.x >= stock.date_purchased) {
-          dailyObj.y = (dailyData.y * stock.number_shares);
-          dailyObj.z = stock.number_shares;
-        } else {
-          dailyObj.y = 0;
-          dailyObj.z = 0;
-        }
+        filteredIEX[0].data.forEach(dailyData => {
+          const dailyObj = {};
+          dailyObj.x = dailyData.x;
+          
+          if (dailyData.x >= stock.date_purchased) {
+            dailyObj.y = (dailyData.y * stock.number_shares);
+            dailyObj.z = stock.number_shares;
+          } else {
+            dailyObj.y = 0;
+            dailyObj.z = 0;
+          }
 
-        stockPerformance.push(dailyObj);
+          stockPerformance.push(dailyObj);
+        })
+
+        stockData.push(stockPerformance);
+
       })
 
-      stockData.push(stockPerformance);
+      // Combining stockData together into Portfolio1
+      const consolidatedStockData = stockData.reduce((acc, stockArr) => {
+        stockArr.forEach((dailyObj, i) => {
+          if (!acc[i]) {
+            const obj = {};
+            obj.x = dailyObj.x;
+            obj.y = dailyObj.y;
+            obj.z = dailyObj.z;
+            acc.push(obj);
+          } else {
+            acc[i].y += dailyObj.y;
+            acc[i].z += dailyObj.z;
+          }
+        })
+        return acc;
+      }, [])
 
-    })
-
-    // Combining stockData together into Portfolio1
-    const consolidatedStockData = stockData.reduce((acc, stockArr) => {
-      stockArr.forEach((dailyObj, i) => {
-        if (!acc[i]) {
-          const obj = {};
-          obj.x = dailyObj.x;
-          obj.y = dailyObj.y;
-          obj.z = dailyObj.z;
-          acc.push(obj);
-        } else {
-          acc[i].y += dailyObj.y;
-          acc[i].z += dailyObj.z;
-        }
-      })
-      return acc;
-    }, [])
-
-    portfolioContainer.data = consolidatedStockData;
+      portfolioContainer.data = consolidatedStockData;
+    }
+    
     consolidatedInformation.push(portfolioContainer);
 
   }
@@ -253,18 +284,22 @@ stockController.finalizeData = (req, res, next) => {
   const finalData = [];
 
   for(let i = 0; i < consolidatedInformation.length; i++) {
-    for(let j = 0; j < consolidatedInformation[i].data.length; j++) {
-      if (!finalData[j]) {
-        const obj = {};
-        obj.x = consolidatedInformation[i].data[j].x;
-        obj.y = consolidatedInformation[i].data[j].y;
-        obj.z = consolidatedInformation[i].data[j].z;
-        finalData.push(obj);
-      } else {
-        finalData[j].y += consolidatedInformation[i].data[j].y;
-        finalData[j].z += consolidatedInformation[i].data[j].z;
+    
+    if (consolidatedInformation[i].data) {
+
+      for(let j = 0; j < consolidatedInformation[i].data.length; j++) {
+        if (!finalData[j]) {
+          const obj = {};
+          obj.x = consolidatedInformation[i].data[j].x;
+          obj.y = consolidatedInformation[i].data[j].y;
+          obj.z = consolidatedInformation[i].data[j].z;
+          finalData.push(obj);
+        } else {
+          finalData[j].y += consolidatedInformation[i].data[j].y;
+          finalData[j].z += consolidatedInformation[i].data[j].z;
+        }
       }
-      // finalData.push(consolidatedInformation[i].data[j].y);
+
     }
   }
 
@@ -275,6 +310,7 @@ stockController.finalizeData = (req, res, next) => {
   return next();
 }
   
+module.exports = stockController;
 
 // SCRATCH NOTES
 
@@ -348,6 +384,3 @@ stockController.finalizeData = (req, res, next) => {
   */
 
  // [ {ticker: consolidated, data: [{}, {}, {}] }, { ticker: fb, data: [{x: date, y: price}, {}, {}] }, { ticker: aapl, data: [{}, {}, {}] }  ]
-
-
-module.exports = stockController;

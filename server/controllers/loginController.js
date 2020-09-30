@@ -135,9 +135,8 @@ loginController.verifyUser = (req, res, next) => {
     return next({
       log: `Error occurred with verifying user in the database : ${err}`,
       message: { err: "An error occurred while checking if user exists in database." }
-    });    
+    });
   })
-  
 }
 
 module.exports = loginController;
