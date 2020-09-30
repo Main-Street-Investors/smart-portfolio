@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Button from 'react-bootstrap/Button';
 
 class Signup extends Component {
   constructor(props) {
@@ -13,11 +14,11 @@ class Signup extends Component {
       <div>
       <h3 className="headline">Sign up</h3>
       <div>
-      Username: <input type="text"></input>
+      Username: <input className="usernameinput" type="text"></input>
       <div>
-      Password: <input type="password"></input>
+      Password: <input className="passwordinput" type="password"></input>
       <div>
-      <button type="submit">Submit</button>
+      <Button variant="outline-info">Submit</Button>
                    </div>
               </div>
            </div>

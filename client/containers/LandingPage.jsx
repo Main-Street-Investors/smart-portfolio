@@ -12,13 +12,13 @@ class LandingPage extends Component {
       <div>
         <h1 className="logo">Smart Portfolio</h1>
         <div>
-          <Button variant="outline-primary">Google login</Button>
+          <Button className="space" variant="outline-info">Google Login</Button>
           <div>
             <Link to="/Login">
-          <Button variant="outline-primary">Smart Portfolio Login</Button>
+          <Button className="space" variant="outline-info">Smart Portfolio Login</Button>
           </Link>
           <Link to="/signup">
-            <Button variant="outline-primary">Smart Portfolio Signup</Button>
+            <Button className="space" variant="outline-info">Smart Portfolio Signup</Button>
           </Link>
         </div>
       </div>

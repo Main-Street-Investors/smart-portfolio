@@ -2,7 +2,9 @@ body {
   font-family: 'Open Sans Condensed';
   text-align: center;
   background-color: #0c1d25;
-  color: #bcc5ca;
+  /* color: #bcc5ca; */
+  color: white;
+
 }
 
 .logo {
@@ -10,29 +12,6 @@ body {
   font-size: 150px;
   font-family: 'Henny Penny', cursive;
   color: #146fa0;
-}
-
-/*
-
-button {
-  width: auto;
-  height: 30px;
-  letter-spacing: 1px;
-  line-height: 30px;
-  padding: 0 15px;
-  margin: 5px 10px;
-  font-size: 15px;
-  background-color: rgb(128, 124, 120);
-  color: white;
-  text-transform: uppercase;
-  font-weight: normal;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-} */
-
-input {
-  margin: 10px;
 }
 
 .mainLoadingContainer {
@@ -45,7 +24,7 @@ input {
   justify-content: center;
 }
 
-#dashNav {
+#nav {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -57,6 +36,10 @@ input {
 
 #logoutDiv {
   margin-top: 10px;
+}
+
+#logoutBtn {
+  margin-top: 30px;
 }
 
 .centerColumn {
@@ -75,6 +58,11 @@ input {
 }
 
 .chartRangeButton {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.tableButtons {
   margin-left: 5px;
   margin-right: 5px;
 }
@@ -111,6 +99,42 @@ a:hover {
   text-decoration: none !important;
 }
 
-.modal-dialog {
-  width: 1300px; /* New width for default modal */
+.modal-content {
+  background-color: #0c1d25;
+}
+
+.form-control {
+  background-color: #255b74;
+  color: white;
+  width: 90%;
+  margin-left: 5%;
+}
+
+.form-control::placeholder {
+  color: #9da3a8;
+}
+
+.close {
+  color: #255b74;
+  text-shadow: 0 1px 0 black;
+}
+
+.close:hover {
+  color: white;
+}
+
+.usernameinput {
+  background-color: #255b74;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.passwordinput {
+  background-color: #255b74;
+  color: white;
+  margin-bottom: 15px;
+}
+
+.space {
+  margin: 5px;
 }

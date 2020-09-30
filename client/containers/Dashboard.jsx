@@ -35,9 +35,9 @@ class Dashboard extends Component {
         {!this.state.loading &&
         <Container fluid={true}>
           <Row>
-            <Col lg={2} id="dashNav">
+            <Col lg={2} id="nav">
               <div>
-                <Link to="/portfolio">
+                <Link to="/portfolio/1">
                   <Button variant="outline-info" block>
                     Manage Your Portfolios
                   </Button>
@@ -54,12 +54,12 @@ class Dashboard extends Component {
                 </Link>
               </div>
             </Col>
-            
+
             <Col lg={10}>
               <Row>
                 <Col lg={10}>
                   <Row className="centerColumn">
-                    <h3 id="chartTitle">Aggregated Stocks for Portfolio {this.state.portfolioNum}</h3>
+                    <h3 id="chartTitle">Aggregated Stocks for {this.state.portfolioNum}</h3>
                   </Row>
                   <Row className="centerColumn">
                     <div id="chartContainer">
