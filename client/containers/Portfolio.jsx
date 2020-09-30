@@ -92,6 +92,7 @@ function Portfolio() {
           </Button>
         </Modal.Footer>
       </Modal>
+    </div>}
     </div>
   );
 }
@@ -158,7 +159,7 @@ function PortfolioManager(props) {
           }}>View History</Button>
         </Link>
 
-      </div>}
+      </div>
       <Modal centered show={showRenamePortfolio} onHide={handleRenamePortfolioClose}>
         <Modal.Header closeButton>
           <Modal.Title>Name your Portfolio</Modal.Title>
