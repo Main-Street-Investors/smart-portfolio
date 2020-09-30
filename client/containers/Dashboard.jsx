@@ -11,7 +11,7 @@ class Dashboard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: false,
+      loading: true,
       portfolioNum: 1,
       data: [
         { x: 1, y: 2 },
@@ -21,6 +21,15 @@ class Dashboard extends Component {
         { x: 5, y: 7 }
       ]
     };
+  }
+
+  componentDidMount() {
+    fetch('/api/getPortfolio')
+    .then(resp => resp.json())
+    .then(this.setState({
+      ...this.state,
+      loading: false
+    }))
   }
 
   render() {
@@ -42,7 +51,8 @@ class Dashboard extends Component {
                     Manage Your Portfolios
                   </Button>
                 </Link>
-                <Button className="dashNavBtn" variant="outline-info" block>Portfolio 1</Button>
+                <Button className="dashNavBtn" variant="outline-info" block>Consolidated Portfolios</Button>
+                <Button variant="outline-info" block>Portfolio 1</Button>
                 <Button variant="outline-info" block>Portfolio 2</Button>
                 <Button variant="outline-info" block>Individual Stocks</Button>
               </div>
