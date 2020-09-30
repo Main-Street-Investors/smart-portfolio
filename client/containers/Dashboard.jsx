@@ -42,7 +42,8 @@ class Dashboard extends Component {
                     Manage Your Portfolios
                   </Button>
                 </Link>
-                <Button className="dashNavBtn" variant="outline-info" block>Portfolio 1</Button>
+                <Button className="dashNavBtn" variant="outline-info" block>Consolidated Portfolios</Button>
+                <Button variant="outline-info" block>Portfolio 1</Button>
                 <Button variant="outline-info" block>Portfolio 2</Button>
                 <Button variant="outline-info" block>Individual Stocks</Button>
               </div>

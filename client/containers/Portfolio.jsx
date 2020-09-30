@@ -24,52 +24,60 @@ function Portfolio() {
   const [historical, setHistorical] = useState(false);
   if (!historical && location.pathname.match(/history/g)) setHistorical(true);
 
+  const [loading, setLoading] = useState(false);
+
   return (
     <div>
+      {loading && <div className="mainLoadingContainer">
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </div>}
+    {!loading && <div>
       <div className="topPad"></div>
-      <Container fluid={true}>
-        <Row style={{height: '90vh'}}>
-          <Col lg={2} id="nav">
-            <div>
-              <Button variant="outline-info" block>Portfolio 1</Button>
-              <Button variant="outline-info" block>Portfolio 2</Button>
-              <Button variant="outline-info" block>Create New Portfolio</Button>
-            </div>
-            <div id="logoutDiv">
-              {historical && <Link to={`/Portfolio/${location.pathname.slice(11, 12)}`}>
-                <Button variant="outline-info" block onClick={() => {
-                  setHistorical(false);
-                }}>Back to Manager</Button>
-              </Link>}
-              <Link to="/Dashboard">
-                <Button id="backToDash" variant="outline-info" block>Back to Dashboard</Button>
-              </Link>
-              <Link to="/">
-                <Button id="logoutBtn" variant="outline-secondary" block>
-                  Logout
-                </Button>
-              </Link>
-            </div>
-          </Col>
-          <Col>
-            <Switch>
-              <Route path={`${match.path}/:portfolioID`} exact>
-                <PortfolioManager setHistorical={setHistorical}/>
-              </Route>
-              <Route path={`${match.path}/:portfolioID/history`}>
-                <PortfolioHistory />
-              </Route>
-            </Switch>
-          </Col>
-        </Row>
-      </Container>
+        <Container fluid={true}>
+          <Row style={{height: '90vh'}}>
+            <Col lg={2} id="nav">
+              <div>
+                <Button variant="outline-info" block>Portfolio 1</Button>
+                <Button variant="outline-info" block>Portfolio 2</Button>
+                <Button variant="outline-info" block>Create New Portfolio</Button>
+              </div>
+              <div id="logoutDiv">
+                {historical && <Link to={`/Portfolio/${location.pathname.slice(11, 12)}`}>
+                  <Button variant="outline-info" block onClick={() => {
+                    setHistorical(false);
+                  }}>Back to Manager</Button>
+                </Link>}
+                <Link to="/Dashboard">
+                  <Button id="backToDash" variant="outline-info" block>Back to Dashboard</Button>
+                </Link>
+                <Link to="/">
+                  <Button id="logoutBtn" variant="outline-secondary" block>
+                    Logout
+                  </Button>
+                </Link>
+              </div>
+            </Col>
+            <Col>
+              <Switch>
+                <Route path={`${match.path}/:portfolioID`} exact>
+                  <PortfolioManager setHistorical={setHistorical}/>
+                </Route>
+                <Route path={`${match.path}/:portfolioID/history`}>
+                  <PortfolioHistory />
+                </Route>
+              </Switch>
+            </Col>
+          </Row>
+        </Container>
+      </div>}
     </div>
   );
 }
 
 function PortfolioManager(props) {
   let { portfolioID } = useParams();
-  const [loading, setLoading] = useState(false);
   const [portID, setPortID] = useState(portfolioID);
 
   const [showNewPortfolio, setShowNewPortfolio] = useState(false);
@@ -84,12 +92,6 @@ function PortfolioManager(props) {
   return (
     <div>
       <h3>Holdings of {portID}</h3>
-      {loading && <div className="mainLoadingContainer">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>}
-      {!loading &&
       <div>
         <div className="tableContainer">
           <Table striped bordered hover variant="dark">
@@ -130,7 +132,7 @@ function PortfolioManager(props) {
           }}>View History</Button>
         </Link>
 
-      </div>}
+      </div>
       <Modal centered show={showNewPortfolio} onHide={handleNewPortfolioClose}>
         <Modal.Header closeButton>
           <Modal.Title>Name your Portfolio</Modal.Title>
@@ -200,18 +202,10 @@ function PortfolioManager(props) {
 const PortfolioHistory = () => {
   let { portfolioID } = useParams();
   const [portID, setPortID] = useState(portfolioID);
-  const [loading, setLoading] = useState(false);
 
   return(
     <div>
       <h3>History of {portID}</h3>
-      {loading && <div className="mainLoadingContainer">
-        <Spinner animation="border" role="status">
-          <span className="sr-only">Loading...</span>
-        </Spinner>
-      </div>}
-      {!loading &&
-      <div>
         <div className="tableContainer">
           <Table striped bordered hover variant="dark">
             <thead>
@@ -236,7 +230,6 @@ const PortfolioHistory = () => {
             </tbody>
           </Table>
         </div>
-      </div>}
     </div>
   )
 }
