@@ -13,7 +13,7 @@ class Login extends Component {
       <div>
       <h3 className="headline">Log in</h3>
       <div>
-      Username: <input className="usernameinput" type="text"></input>
+      Username: <input className="usernameinput" ></input>
       <div>
       Password: <input className="passwordinput" type="password"></input>
       <div>

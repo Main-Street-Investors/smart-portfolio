@@ -38,6 +38,10 @@ body {
   margin-top: 10px;
 }
 
+#backToDash {
+  margin-top: 10px;
+}
+
 #logoutBtn {
   margin-top: 30px;
 }
@@ -49,11 +53,8 @@ body {
 }
 
 #chartContainer {
-  -moz-box-shadow: 0 8px 6px -6px #bcc5ca;
-  -webkit-box-shadow: 0 8px 6px -6px #bcc5ca;
-  box-shadow: 0 8px 6px -6px #bcc5ca;
-  border-radius: 10px;
-  border: 1px solid #bcc5ca;
+  height: 70vh;
+  width: 80vw;
   margin-bottom: 20px;
 }
 
@@ -71,10 +72,8 @@ body {
   padding: 1rem;
   border: 1px dashed #bcc5ca;
   border-radius: 10px;
-  height: 100%;
-  -moz-box-shadow: 0 8px 6px -6px #bcc5ca;
-  -webkit-box-shadow: 0 8px 6px -6px #bcc5ca;
-  box-shadow: 0 8px 6px -6px #bcc5ca;
+  height: 90vh;
+  overflow: scroll;
 }
 
 .glanceInfo {
@@ -124,17 +123,30 @@ a:hover {
 }
 
 .usernameinput {
-  background-color: #255b74;
+  background-color: #95acb8;
   color: white;
   margin-bottom: 15px;
+  border-radius: 10px;
+  border: #255b74;
 }
 
 .passwordinput {
-  background-color: #255b74;
+  background-color: #95acb8;
   color: white;
   margin-bottom: 15px;
+  border-radius: 10px;
+  border: #255b74;
 }
 
 .space {
   margin: 5px;
+}
+.table {
+  margin-bottom: 0;
+}
+
+.tableContainer {
+  max-height: 70vh;
+  margin-bottom: 20px;
+  padding: 20px;
 }
