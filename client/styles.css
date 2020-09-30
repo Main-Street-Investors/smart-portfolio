@@ -2,6 +2,9 @@ body {
   font-family: 'Open Sans Condensed';
   text-align: center;
   background-color: #0c1d25;
+  /* color: #bcc5ca; */
+  color: white;
+
 }
 
 .logo {
@@ -11,27 +14,139 @@ body {
   color: #146fa0;
 }
 
-div {
-  color: #bcc5ca;
+.mainLoadingContainer {
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-button {
-  width: auto;
-  height: 30px;
-  letter-spacing: 1px;
-  line-height: 30px;
-  padding: 0 15px;
-  margin: 5px 10px;
-  font-size: 15px;
-  background-color: rgb(128, 124, 120);
-  color: white;
-  text-transform: uppercase;
-  font-weight: normal;
-  border: none;
+#nav {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.dashNavBtn {
+  margin-top: 0.5rem;
+}
+
+#logoutDiv {
+  margin-top: 10px;
+}
+
+#backToDash {
+  margin-top: 10px;
+}
+
+#logoutBtn {
+  margin-top: 30px;
+}
+
+.centerColumn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#chartContainer {
+  height: 70vh;
+  width: 80vw;
+  margin-bottom: 20px;
+}
+
+.chartRangeButton {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.tableButtons {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+#glance {
+  padding: 1rem;
+  border: 1px dashed #bcc5ca;
+  border-radius: 10px;
+  height: 90vh;
+  overflow: scroll;
+}
+
+.glanceInfo {
+  border: 0.5px solid #b81752;
   border-radius: 5px;
-  cursor: pointer;
+  margin-bottom: 1rem;
 }
 
-input {
-  margin: 10px;
+.glanceInfoText {
+  margin: 0;
+}
+
+.topPad {
+  height: 5vh;
+}
+
+.btn a {
+  color: inherit !important;
+}
+
+a:hover {
+  text-decoration: none !important;
+}
+
+.modal-content {
+  background-color: #0c1d25;
+}
+
+.form-control {
+  background-color: #255b74;
+  color: white;
+  width: 90%;
+  margin-left: 5%;
+}
+
+.form-control::placeholder {
+  color: #9da3a8;
+}
+
+.close {
+  color: #255b74;
+  text-shadow: 0 1px 0 black;
+}
+
+.close:hover {
+  color: white;
+}
+
+.usernameinput {
+  background-color: #95acb8;
+  color: white;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: #255b74;
+}
+
+.passwordinput {
+  background-color: #95acb8;
+  color: white;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: #255b74;
+}
+
+.space {
+  margin: 5px;
+}
+.table {
+  margin-bottom: 0;
+}
+
+.tableContainer {
+  max-height: 70vh;
+  margin-bottom: 20px;
+  padding: 20px;
 }
