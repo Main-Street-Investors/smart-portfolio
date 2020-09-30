@@ -14,16 +14,21 @@ import Spinner from 'react-bootstrap/Spinner';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import { useLocation } from 'react-router-dom'
 
 
 function Portfolio() {
   let match = useRouteMatch();
+  let location = useLocation();
+
+  const [historical, setHistorical] = useState(false);
+  if (!historical && location.pathname.match(/history/g)) setHistorical(true);
 
   return (
     <div>
       <div className="topPad"></div>
       <Container fluid={true}>
-        <Row>
+        <Row style={{height: '90vh'}}>
           <Col lg={2} id="nav">
             <div>
               <Button variant="outline-info" block>Portfolio 1</Button>
@@ -31,8 +36,13 @@ function Portfolio() {
               <Button variant="outline-info" block>Create New Portfolio</Button>
             </div>
             <div id="logoutDiv">
+              {historical && <Link to={`/Portfolio/${location.pathname.slice(11, 12)}`}>
+                <Button variant="outline-info" block onClick={() => {
+                  setHistorical(false);
+                }}>Back to Manager</Button>
+              </Link>}
               <Link to="/Dashboard">
-                <Button variant="outline-info" block>Back to Dashboard</Button>
+                <Button id="backToDash" variant="outline-info" block>Back to Dashboard</Button>
               </Link>
               <Link to="/">
                 <Button id="logoutBtn" variant="outline-secondary" block>
@@ -43,11 +53,11 @@ function Portfolio() {
           </Col>
           <Col>
             <Switch>
-              <Route path={`${match.path}/:portfolioID`}>
-                <PortfolioManager />
+              <Route path={`${match.path}/:portfolioID`} exact>
+                <PortfolioManager setHistorical={setHistorical}/>
               </Route>
               <Route path={`${match.path}/:portfolioID/history`}>
-                <h3>Viewing History</h3>
+                <PortfolioHistory />
               </Route>
             </Switch>
           </Col>
@@ -57,8 +67,7 @@ function Portfolio() {
   );
 }
 
-function PortfolioManager() {
-  let match = useRouteMatch();
+function PortfolioManager(props) {
   let { portfolioID } = useParams();
   const [loading, setLoading] = useState(false);
   const [portID, setPortID] = useState(portfolioID);
@@ -82,38 +91,44 @@ function PortfolioManager() {
       </div>}
       {!loading &&
       <div>
-      <Table striped bordered hover variant="dark">
-        <thead>
-          <tr>
-            <th>Select</th>
-            <th>Ticker Name</th>
-            <th>Date Purchased</th>
-            <th>Purchase Price</th>
-            <th>Number of Shares</th>
-            <th>Tags</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td>AAPL</td>
-            <td>9/29/20</td>
-            <td>$63.51</td>
-            <td>7</td>
-            <td>tech</td>
-          </tr>
-        </tbody>
-      </Table>
-      <Button className="tableButtons" variant="outline-info" onClick={() => {
-        setShowNewPortfolio(true);
-      }}>Rename this Portfolio</Button>
-      <Button className="tableButtons" variant="outline-info" onClick={() => {
-        setNewStock(true);
-      }}>Add Stock</Button>
-      <Button className="tableButtons" variant="outline-info" onClick={() => {
-        setSellStock(true);
-      }}>Sell Stock</Button>
-      <Link to={`${portID}/history`}><Button className="tableButtons" variant="outline-info">View History</Button></Link>
+        <div className="tableContainer">
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th>Select</th>
+                <th>Ticker Name</th>
+                <th>Date Purchased</th>
+                <th>Purchase Price</th>
+                <th>Number of Shares</th>
+                <th>Tags</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td>AAPL</td>
+                <td>9/29/20</td>
+                <td>$63.51</td>
+                <td>7</td>
+                <td>tech</td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+        <Button className="tableButtons" variant="outline-info" onClick={() => {
+          setShowNewPortfolio(true);
+        }}>Rename this Portfolio</Button>
+        <Button className="tableButtons" variant="outline-info" onClick={() => {
+          setNewStock(true);
+        }}>Add Stock</Button>
+        <Button className="tableButtons" variant="outline-info" onClick={() => {
+          setSellStock(true);
+        }}>Sell Stock</Button>
+        <Link to={`${portID}/history`}>
+          <Button className="tableButtons" variant="outline-info" onClick={() => {
+            props.setHistorical(true);
+          }}>View History</Button>
+        </Link>
 
       </div>}
       <Modal centered show={showNewPortfolio} onHide={handleNewPortfolioClose}>
@@ -127,7 +142,7 @@ function PortfolioManager() {
           </Form.Group>
         </Form>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleNewPortfolioClose}>
+          <Button variant="outline-info" onClick={handleNewPortfolioClose}>
             Save Changes
           </Button>
         </Modal.Footer>
@@ -151,7 +166,7 @@ function PortfolioManager() {
           </Form.Group>
         </Form>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleNewStockClose}>
+          <Button variant="outline-info" onClick={handleNewStockClose}>
             Submit
           </Button>
         </Modal.Footer>
@@ -173,13 +188,57 @@ function PortfolioManager() {
           </Form.Group>
         </Form>
         <Modal.Footer>
-          <Button variant="primary" onClick={handleSellStockClose}>
+          <Button variant="outline-info" onClick={handleSellStockClose}>
             Submit
           </Button>
         </Modal.Footer>
       </Modal>
     </div>
   );
+};
+
+const PortfolioHistory = () => {
+  let { portfolioID } = useParams();
+  const [portID, setPortID] = useState(portfolioID);
+  const [loading, setLoading] = useState(false);
+
+  return(
+    <div>
+      <h3>History of {portID}</h3>
+      {loading && <div className="mainLoadingContainer">
+        <Spinner animation="border" role="status">
+          <span className="sr-only">Loading...</span>
+        </Spinner>
+      </div>}
+      {!loading &&
+      <div>
+        <div className="tableContainer">
+          <Table striped bordered hover variant="dark">
+            <thead>
+              <tr>
+                <th>Select</th>
+                <th>Ticker Name</th>
+                <th>Date Purchased</th>
+                <th>Purchase Price</th>
+                <th>Number of Shares</th>
+                <th>Tags</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td>AAPL</td>
+                <td>9/29/20</td>
+                <td>$63.51</td>
+                <td>7</td>
+                <td>tech</td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+      </div>}
+    </div>
+  )
 }
 
 export default Portfolio;

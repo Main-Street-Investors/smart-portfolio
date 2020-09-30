@@ -34,7 +34,7 @@ class Dashboard extends Component {
         </div>}
         {!this.state.loading &&
         <Container fluid={true}>
-          <Row>
+          <Row style={{height: '90vh'}}>
             <Col lg={2} id="nav">
               <div>
                 <Link to="/portfolio/1">
@@ -56,7 +56,7 @@ class Dashboard extends Component {
             </Col>
 
             <Col lg={10}>
-              <Row>
+              <Row style={{height: '90vh'}}>
                 <Col lg={10}>
                   <Row className="centerColumn">
                     <h3 id="chartTitle">Aggregated Stocks for {this.state.portfolioNum}</h3>
@@ -65,8 +65,6 @@ class Dashboard extends Component {
                     <div id="chartContainer">
                       <VictoryChart
                         theme={VictoryTheme.material}
-                        height={700}
-                        width={1000}
                       >
                         <VictoryLine
                           style={{
@@ -79,9 +77,9 @@ class Dashboard extends Component {
                     </div>
                   </Row>
                   <Row className="centerColumn">
-                    <Button className="chartRangeButton" variant="outline-info">1 Day</Button>
                     <Button className="chartRangeButton" variant="outline-info">5 Days</Button>
                     <Button className="chartRangeButton" variant="outline-info">1 Month</Button>
+                    <Button className="chartRangeButton" variant="outline-info">3 Months</Button>
                   </Row>
                 </Col>
                 <Col lg={2}>
