@@ -16,12 +16,16 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom'
 
-
 function Portfolio() {
   let match = useRouteMatch();
   let location = useLocation();
 
+
   const [historical, setHistorical] = useState(false);
+
+  const [showNewPortfolio, setNewPortfolio] = useState(false);
+  const handleNewPortfolioClose = () => setNewPortfolio(false);
+
   if (!historical && location.pathname.match(/history/g)) setHistorical(true);
 
   const [loading, setLoading] = useState(false);
@@ -35,43 +39,59 @@ function Portfolio() {
       </div>}
     {!loading && <div>
       <div className="topPad"></div>
-        <Container fluid={true}>
-          <Row style={{height: '90vh'}}>
-            <Col lg={2} id="nav">
-              <div>
-                <Button variant="outline-info" block>Portfolio 1</Button>
-                <Button variant="outline-info" block>Portfolio 2</Button>
-                <Button variant="outline-info" block>Create New Portfolio</Button>
-              </div>
-              <div id="logoutDiv">
-                {historical && <Link to={`/Portfolio/${location.pathname.slice(11, 12)}`}>
-                  <Button variant="outline-info" block onClick={() => {
-                    setHistorical(false);
-                  }}>Back to Manager</Button>
-                </Link>}
-                <Link to="/Dashboard">
-                  <Button id="backToDash" variant="outline-info" block>Back to Dashboard</Button>
-                </Link>
-                <Link to="/">
-                  <Button id="logoutBtn" variant="outline-secondary" block>
-                    Logout
-                  </Button>
-                </Link>
-              </div>
-            </Col>
-            <Col>
-              <Switch>
-                <Route path={`${match.path}/:portfolioID`} exact>
-                  <PortfolioManager setHistorical={setHistorical}/>
-                </Route>
-                <Route path={`${match.path}/:portfolioID/history`}>
-                  <PortfolioHistory />
-                </Route>
-              </Switch>
-            </Col>
-          </Row>
-        </Container>
-      </div>}
+      <Container fluid={true}>
+        <Row style={{height: '90vh'}}>
+          <Col lg={2} id="nav">
+            <div>
+              <Button variant="outline-info" block>Portfolio 1</Button>
+              <Button variant="outline-info" block>Portfolio 2</Button>
+              <Button variant="outline-info" block onClick={() => {
+              setNewPortfolio(true);}}>Create New Portfolio</Button>
+            </div>
+            <div id="logoutDiv">
+              {historical && <Link to={`/Portfolio/${location.pathname.slice(11, 12)}`}>
+                <Button variant="outline-info" block onClick={() => {
+                  setHistorical(false);
+                }}>Back to Manager</Button>
+              </Link>}
+              <Link to="/Dashboard">
+                <Button id="backToDash" variant="outline-info" block>Back to Dashboard</Button>
+              </Link>
+              <Link to="/">
+                <Button id="logoutBtn" variant="outline-secondary" block>
+                  Logout
+                </Button>
+              </Link>
+            </div>
+          </Col>
+          <Col>
+            <Switch>
+              <Route path={`${match.path}/:portfolioID`} exact>
+                <PortfolioManager setHistorical={setHistorical}/>
+              </Route>
+              <Route path={`${match.path}/:portfolioID/history`}>
+                <PortfolioHistory />
+              </Route>
+            </Switch>
+          </Col>
+        </Row>
+      </Container>
+      <Modal centered show={showNewPortfolio} onHide={handleNewPortfolioClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>New Portfolio</Modal.Title>
+        </Modal.Header>
+        <Form>
+          <Form.Group>
+            <Form.Label>Name of Portfolio:</Form.Label>
+            <Form.Control type="text" placeholder="Portfolio"/>
+          </Form.Group>
+        </Form>
+        <Modal.Footer>
+          <Button variant="outline-info" onClick={handleNewPortfolioClose}>
+            Create Portfolio
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
@@ -80,14 +100,15 @@ function PortfolioManager(props) {
   let { portfolioID } = useParams();
   const [portID, setPortID] = useState(portfolioID);
 
-  const [showNewPortfolio, setShowNewPortfolio] = useState(false);
+  const [showRenamePortfolio, setRenamePortfolio] = useState(false);
   const [showNewStock, setNewStock] = useState(false);
   const [showSellStock, setSellStock] = useState(false);
+  const [showEditStock, setEditStock] = useState(false);
 
-
-  const handleNewPortfolioClose = () => setShowNewPortfolio(false);
+  const handleRenamePortfolioClose = () => setRenamePortfolio(false);
   const handleNewStockClose = () => setNewStock(false);
   const handleSellStockClose = () => setSellStock(false);
+  const handleEditStockClose = () => setEditStock(false);
 
   return (
     <div>
@@ -107,7 +128,9 @@ function PortfolioManager(props) {
             </thead>
             <tbody>
               <tr>
-                <td></td>
+                <td>
+                  <input type="checkbox" id="checkBox"></input>
+                  </td>
                 <td>AAPL</td>
                 <td>9/29/20</td>
                 <td>$63.51</td>
@@ -118,7 +141,7 @@ function PortfolioManager(props) {
           </Table>
         </div>
         <Button className="tableButtons" variant="outline-info" onClick={() => {
-          setShowNewPortfolio(true);
+          setRenamePortfolio(true);
         }}>Rename this Portfolio</Button>
         <Button className="tableButtons" variant="outline-info" onClick={() => {
           setNewStock(true);
@@ -126,25 +149,28 @@ function PortfolioManager(props) {
         <Button className="tableButtons" variant="outline-info" onClick={() => {
           setSellStock(true);
         }}>Sell Stock</Button>
+        <Button className="tableButtons" variant="outline-info" onClick={() => {
+          setEditStock(true);
+        }}>Edit Stock</Button>
         <Link to={`${portID}/history`}>
           <Button className="tableButtons" variant="outline-info" onClick={() => {
             props.setHistorical(true);
           }}>View History</Button>
         </Link>
 
-      </div>
-      <Modal centered show={showNewPortfolio} onHide={handleNewPortfolioClose}>
+      </div>}
+      <Modal centered show={showRenamePortfolio} onHide={handleRenamePortfolioClose}>
         <Modal.Header closeButton>
           <Modal.Title>Name your Portfolio</Modal.Title>
         </Modal.Header>
         <Form>
           <Form.Group>
-            <Form.Label>Give your new portfolio a new name:</Form.Label>
+            <Form.Label>Give your portfolio a new name:</Form.Label>
             <Form.Control type="text" placeholder="Portfolio 1"/>
           </Form.Group>
         </Form>
         <Modal.Footer>
-          <Button variant="outline-info" onClick={handleNewPortfolioClose}>
+          <Button variant="outline-info" onClick={handleRenamePortfolioClose}>
             Save Changes
           </Button>
         </Modal.Footer>
@@ -179,6 +205,26 @@ function PortfolioManager(props) {
         </Modal.Header>
         <Form>
           <Form.Group>
+            <Form.Label>Date Sold:</Form.Label>
+            <Form.Control type="date" placeholder="29-09-2020" />
+            <Form.Label>Sold Price:</Form.Label>
+            <Form.Control type="number" min="1" placeholder="420"/>
+            <Form.Label># of Shares:</Form.Label>
+            <Form.Control type="number" min="1" placeholder="1"/>
+          </Form.Group>
+        </Form>
+        <Modal.Footer>
+          <Button variant="outline-info" onClick={handleSellStockClose}>
+            Submit
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal centered show={showEditStock} onHide={handleEditStockClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Stock</Modal.Title>
+        </Modal.Header>
+        <Form>
+          <Form.Group>
             <Form.Label>Ticker Name:</Form.Label>
             <Form.Control type="text" placeholder="TSLA" />
             <Form.Label>Date Purchased:</Form.Label>
@@ -187,10 +233,12 @@ function PortfolioManager(props) {
             <Form.Control type="number" min="1" placeholder="420"/>
             <Form.Label># of Shares:</Form.Label>
             <Form.Control type="number" min="1" placeholder="1"/>
+            <Form.Label>Tags:</Form.Label>
+            <Form.Control type="text" placeholder="tech"/>
           </Form.Group>
         </Form>
         <Modal.Footer>
-          <Button variant="outline-info" onClick={handleSellStockClose}>
+          <Button variant="outline-info" onClick={handleEditStockClose}>
             Submit
           </Button>
         </Modal.Footer>
