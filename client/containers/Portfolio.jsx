@@ -138,7 +138,7 @@ function PortfolioManager(props) {
         <Form>
           <Form.Group>
             <Form.Label>Give your new portfolio a new name:</Form.Label>
-            <Form.Control type="text" placeholder="Portfolio 1" />
+            <Form.Control type="text" placeholder="Portfolio 1"/>
           </Form.Group>
         </Form>
         <Modal.Footer>

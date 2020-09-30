@@ -2,7 +2,9 @@ body {
   font-family: 'Open Sans Condensed';
   text-align: center;
   background-color: #0c1d25;
-  color: #bcc5ca;
+  /* color: #bcc5ca; */
+  color: white;
+
 }
 
 .logo {
@@ -11,25 +13,6 @@ body {
   font-family: 'Henny Penny', cursive;
   color: #146fa0;
 }
-
-/*
-
-button {
-  width: auto;
-  height: 30px;
-  letter-spacing: 1px;
-  line-height: 30px;
-  padding: 0 15px;
-  margin: 5px 10px;
-  font-size: 15px;
-  background-color: rgb(128, 124, 120);
-  color: white;
-  text-transform: uppercase;
-  font-weight: normal;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-} */
 
 .mainLoadingContainer {
   position: absolute;
@@ -139,6 +122,25 @@ a:hover {
   color: white;
 }
 
+.usernameinput {
+  background-color: #95acb8;
+  color: white;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: #255b74;
+}
+
+.passwordinput {
+  background-color: #95acb8;
+  color: white;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  border: #255b74;
+}
+
+.space {
+  margin: 5px;
+}
 .table {
   margin-bottom: 0;
 }
