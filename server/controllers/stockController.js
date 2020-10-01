@@ -68,15 +68,48 @@ stockController.getCurrentShares = (req, res, next) => {
 stockController.getIEXData = (req, res, next) => {
   
   const currPortfolio = res.locals.currentShares;
+  const soldPortfolio = res.locals.soldShares;
 
-  let stockStr = '';
+  const currentHoldings = {};
 
-  currPortfolio.forEach((stockObj, i) => {
-    stockStr += stockObj.ticker_name;
-    if(i !== currPortfolio.length - 1) {
-      stockStr += ',';
+  for (const stockObj of currPortfolio) {
+    const portfolioID = stockObj.portfolio_id;
+    if (!currentHoldings[portfolioID]) {
+      currentHoldings[portfolioID] = {}
     }
-  });
+    currentHoldings[portfolioID][stockObj.ticker_name] = stockObj.number_shares; 
+  }
+
+  for (const key in currentHoldings) {
+    const portfolioID = Number(key);
+
+    for (const soldObj of soldPortfolio) {
+      if (soldObj.portfolio_id === portfolioID) {
+        for (let [ticker, shares] of Object.entries(currentHoldings[key])) {
+          if (ticker === soldObj.ticker_name) {
+            if ((shares - soldObj.number_shares) < 0) {
+              currentHoldings[key][ticker] = 0;
+0            } else {
+              currentHoldings[key][ticker] -= soldObj.number_shares;
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  const stockArr = [];
+
+  for(let key in currentHoldings) {
+    for(let ticker in currentHoldings[key]) {
+      if(!stockArr.includes(ticker) && currentHoldings[key][ticker] > 0) {
+        stockArr.push(ticker);
+      }
+    }
+  }
+
+  const stockStr = stockArr.join(',');
 
   if (stockStr !== '') {
 
@@ -145,7 +178,7 @@ stockController.packageIEXData = (req, res, next) => {
 stockController.finalizeData = (req, res, next) => {
 
   const currentPortfolio = res.locals.currentShares;
-
+  
   // Isolating the unique portfolio IDs
   const portfolioIDs = [];
   
@@ -235,7 +268,9 @@ stockController.finalizeData = (req, res, next) => {
       portfolioInfo[key].forEach(stock => {
         const filteredIEX = IEXData.filter(IEXStock => IEXStock.ticker === stock.ticker);
         const stockPerformance = [];
-        
+
+        if (filteredIEX.length > 0) {
+
         filteredIEX[0].data.forEach(dailyData => {
           const dailyObj = {};
           dailyObj.x = dailyData.x;
@@ -252,6 +287,7 @@ stockController.finalizeData = (req, res, next) => {
         })
 
         stockData.push(stockPerformance);
+      }
 
       })
 
