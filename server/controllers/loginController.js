@@ -116,10 +116,6 @@ loginController.verifyUser = (req, res, next) => {
   const getUserQuery = `SELECT * FROM users WHERE username=$1`;
   const getUserVal = [username];
 
-  console.log('body', req.body);
-  console.log('username', username);
-  console.log('password', password);
-
   db.query(getUserQuery, getUserVal)
   .then(data => {
     let passwordInDB = data.rows[0].hashed_password;
