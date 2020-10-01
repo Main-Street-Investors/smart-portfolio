@@ -42,11 +42,13 @@ class Dashboard extends Component {
       return cv;
     });
     data.chartData.map(cv => {
-      cv.data = cv.data.map(point => {
-        point.x = new Date(point.x);
-        point.x.setHours(0);
-        return point;
-      })
+      if (cv.data) {
+        cv.data = cv.data.map(point => {
+          point.x = new Date(point.x);
+          point.x.setHours(0);
+          return point;
+        })
+      }
       return cv;
     });
     const buttons = data.chartData.reduce((acc, cv, i) => {
@@ -56,7 +58,7 @@ class Dashboard extends Component {
       // Create a button that will reset state to show data for this portfolio
       acc.push(<Button className="dashNavBtn" variant="outline-info" key={`portfolioBtn${i}`} block onClick={() => {
         const portName = this.state.data.chartData[i].portfolioName;
-        const totalValue = this.state.data.chartData[i].data[63].y;
+        const totalValue = this.state.data.chartData[i].data ? this.state.data.chartData[i].data[63] ? this.state.data.chartData[i].data[63].y : 0 : 0;
         const acquiredValue = this.state.data.currentShares.reduce((acc, cv) => {
           if (cv.name === portName) {
             acc += cv.price * cv.number_shares;
@@ -126,10 +128,17 @@ class Dashboard extends Component {
 
   componentDidMount() {
     const spData = window.localStorage.getItem('spData');
+    const refresh = window.localStorage.getItem('spRefresh');
     if (spData) {
       let data = JSON.parse(spData);
-      if (Date.now() - new Date(data.accessed).getTime() > 86400000) {
+      if (Date.now() - new Date(data.accessed).getTime() > 86400000 || refresh) {
         // Refresh the data
+        if (refresh) {
+          window.localStorage.removeItem('spRefresh');
+          if (window.localStorage.getItem('spTempPorts')) window.localStorage.removeItem('spTempPorts');
+          if (window.localStorage.getItem('spTempRows')) window.localStorage.removeItem('spTempRows');
+          if (window.localStorage.getItem('spTempSoldRows')) window.localStorage.removeItem('spTempSoldRows');
+        }
         window.localStorage.removeItem('spData');
         fetch('/api/getPortfolio')
         .then(resp => resp.json())
@@ -246,9 +255,9 @@ class Dashboard extends Component {
                                   }
                                   return acc;
                                 }, []).slice(61) :
-                            this.state.range === 90 ? this.state.data.chartData[this.state.portfolioNum].data :
-                            this.state.range === 30 ? this.state.data.chartData[this.state.portfolioNum].data.slice(35) :
-                            this.state.data.chartData[this.state.portfolioNum].data.slice(61)
+                            this.state.range === 90 ? this.state.data.chartData[this.state.portfolioNum].data ? this.state.data.chartData[this.state.portfolioNum].data : [] :
+                            this.state.range === 30 ? this.state.data.chartData[this.state.portfolioNum].data.slice(35) ? this.state.data.chartData[this.state.portfolioNum].data.slice(35) : [] :
+                            this.state.data.chartData[this.state.portfolioNum].data.slice(61) ? this.state.data.chartData[this.state.portfolioNum].data.slice(61) : []
                           }
                         />
                       </VictoryChart>
@@ -282,7 +291,7 @@ class Dashboard extends Component {
                     <p>- - - - - - -</p>
                     <h5>Total Value</h5>
                     <div className="glanceInfo">
-                      <p className="glanceInfoText">{`$${this.state.totalValue}`}</p>
+                      <p className="glanceInfoText">{`$${Math.round(this.state.totalValue * 100) / 100}`}</p>
                     </div>
                     <h5>Acquired Value</h5>
                     <div className="glanceInfo">
