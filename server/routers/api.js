@@ -4,6 +4,7 @@ const googleController = require('../controllers/googleController');
 const cookieController = require('../controllers/cookieController');
 const loginController = require('../controllers/loginController');
 const stockController = require('../controllers/stockController');
+const portfolioController = require("../controllers/portfolioController");
 
 // Google OAuth Login
 
@@ -58,8 +59,43 @@ router.get('/getPortfolio',
       currentShares,
       soldShares,
     }
-
-    return res.json(responseObj);
+    
+    return res.status(200).json(responseObj);
   });
+
+  router.post('/newPortfolio',
+    portfolioController.create,
+    (req, res) => {
+
+      const { _id, name } = res.locals.newPortfolio[0];
+      
+      const responseObj = {
+        'portfolioID': _id,
+        'portfolioName': name
+      };
+      
+      res.status(200).json(responseObj);
+    }
+  )
+
+  router.post('/updatePortfolio',
+    portfolioController.updatePortfolioName,
+    (req, res) => {
+      const { _id, name } = res.locals.updatedPortfolio[0];
+        
+      const responseObj = {
+        'portfolioID': _id,
+        'portfolioName': name
+      };
+
+      res.status(200).json(responseObj);
+    })
+
+  router.post('/addShare',
+    portfolioController.addSharesToPortfolio,
+    (req, res) => {
+      res.sendStatus(200);
+    }
+  )
 
 module.exports = router;
