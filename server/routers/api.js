@@ -98,4 +98,18 @@ router.get('/getPortfolio',
     }
   )
 
+  router.post('/addSoldShares',
+    portfolioController.addSoldSharesToPortfolio,
+    (req, res) => {
+      res.sendStatus(200);
+    }
+  )
+
+  router.post('/editShares',
+  portfolioController.editCurrentShares,
+    (req, res) => {
+      res.sendStatus(200);
+    }
+  )
+
 module.exports = router;
