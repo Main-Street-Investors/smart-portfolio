@@ -22,13 +22,13 @@ router.get('/googleSuccess',
   });
 
 // Regular Login
-router.get('/regularLogin',
+router.post('/regularLogin',
   loginController.verifyUser,
   cookieController.setCookie,
   (req, res) => {
     return res.redirect('/dashboard');
   });
-  
+
 // Regular Signup
 router.post('/regularSignup',
   loginController.checkDuplicateUser,
@@ -46,19 +46,19 @@ router.get('/getPortfolio',
   stockController.packageIEXData,
   stockController.finalizeData,
   (req, res) => {
-    
+
     let chartData = res.locals.chartData
     let IEXData = res.locals.IEXData
     let currentShares = res.locals.currentShares
     let soldShares = res.locals.soldShares
-    
+
     const responseObj = {
       chartData,
       IEXData,
       currentShares,
       soldShares,
     }
-    
+
     return res.json(responseObj);
   });
 

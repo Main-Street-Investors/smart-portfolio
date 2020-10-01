@@ -4,7 +4,10 @@ import Button from 'react-bootstrap/Button';
 class Signup extends Component {
   constructor(props) {
     super(props);
-
+    this.state = {
+        usernameInput: '',
+        passwordInput: ''
+      }
   }
 
   
@@ -15,11 +18,35 @@ class Signup extends Component {
       <div>
       <h3 className="headline">Sign up</h3>
       <div>
-      Username: <input className="usernameinput" type="text"></input>
-      <div>
-      Password: <input className="passwordinput" type="password"></input>
-      <div>
-      <Button variant="outline-info">Submit</Button>
+      Username: <input className="usernameinput" onChange={(e) => {
+                this.setState({
+                  ...this.state,
+                  usernameInput: e.target.value
+                });
+              }}></input>      
+              <div>
+      Password: <input className="passwordinput" type="password" onChange={(e) => {
+                  this.setState({
+                    ...this.state,
+                    passwordInput: e.target.value
+                  });
+                }}></input>      
+                <div>
+      <Button variant="outline-info" onClick={() => {
+                    fetch('/api/regularSignup', {
+                      method: 'POST',
+                      body: JSON.stringify({
+                        "username": this.state.usernameInput,
+                        "password": this.state.passwordInput,
+                      }),
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                    })
+                    .then(resp => {
+                      window.location.href = resp.url;
+                    })
+                  }}>Submit</Button>
                    </div>
               </div>
            </div>
