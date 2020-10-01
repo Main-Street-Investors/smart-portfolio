@@ -59,7 +59,7 @@ router.get('/getPortfolio',
       currentShares,
       soldShares,
     }
-    
+
     return res.status(200).json(responseObj);
   });
 
@@ -68,12 +68,12 @@ router.get('/getPortfolio',
     (req, res) => {
 
       const { _id, name } = res.locals.newPortfolio[0];
-      
+
       const responseObj = {
         'portfolioID': _id,
         'portfolioName': name
       };
-      
+
       res.status(200).json(responseObj);
     }
   )
@@ -82,7 +82,7 @@ router.get('/getPortfolio',
     portfolioController.updatePortfolioName,
     (req, res) => {
       const { _id, name } = res.locals.updatedPortfolio[0];
-        
+
       const responseObj = {
         'portfolioID': _id,
         'portfolioName': name
@@ -94,7 +94,7 @@ router.get('/getPortfolio',
   router.post('/addShare',
     portfolioController.addSharesToPortfolio,
     (req, res) => {
-      res.sendStatus(200);
+      res.status(200).json(res.locals.newShare);
     }
   )
 

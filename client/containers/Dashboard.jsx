@@ -42,11 +42,13 @@ class Dashboard extends Component {
       return cv;
     });
     data.chartData.map(cv => {
-      cv.data = cv.data.map(point => {
-        point.x = new Date(point.x);
-        point.x.setHours(0);
-        return point;
-      })
+      if (cv.data) {
+        cv.data = cv.data.map(point => {
+          point.x = new Date(point.x);
+          point.x.setHours(0);
+          return point;
+        })
+      }
       return cv;
     });
     const buttons = data.chartData.reduce((acc, cv, i) => {
@@ -126,10 +128,16 @@ class Dashboard extends Component {
 
   componentDidMount() {
     const spData = window.localStorage.getItem('spData');
+    const refresh = window.localStorage.getItem('spRefresh');
     if (spData) {
       let data = JSON.parse(spData);
-      if (Date.now() - new Date(data.accessed).getTime() > 86400000) {
+      if (Date.now() - new Date(data.accessed).getTime() > 86400000 || refresh) {
         // Refresh the data
+        if (refresh) {
+          window.localStorage.removeItem('spRefresh');
+          if (window.localStorage.getItem('spTempPorts')) window.localStorage.removeItem('spTempPorts');
+          if (window.localStorage.getItem('spTempRows')) window.localStorage.removeItem('spTempRows');
+        }
         window.localStorage.removeItem('spData');
         fetch('/api/getPortfolio')
         .then(resp => resp.json())
