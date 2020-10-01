@@ -75,10 +75,18 @@ stockController.getIEXData = (req, res, next) => {
   for (const stockObj of currPortfolio) {
     const portfolioID = stockObj.portfolio_id;
     if (!currentHoldings[portfolioID]) {
-      currentHoldings[portfolioID] = {}
+      currentHoldings[portfolioID] = {};
+      currentHoldings[portfolioID][stockObj.ticker_name] = stockObj.number_shares;
+    } else {
+      if (currentHoldings[portfolioID][stockObj.ticker_name]) {
+        currentHoldings[portfolioID][stockObj.ticker_name] += stockObj.number_shares;
+      } else {
+        currentHoldings[portfolioID][stockObj.ticker_name] = stockObj.number_shares;
+      }
     }
-    currentHoldings[portfolioID][stockObj.ticker_name] = stockObj.number_shares;
   }
+
+  console.log(currentHoldings);
 
   for (const key in currentHoldings) {
     const portfolioID = Number(key);
@@ -96,8 +104,9 @@ stockController.getIEXData = (req, res, next) => {
         }
       }
     }
-
   }
+
+  console.log(currentHoldings);
 
   const stockArr = [];
 

@@ -57,7 +57,9 @@ portfolioController.addSharesToPortfolio = (req, res, next) => {
   const addSharesQuery = `INSERT INTO shares (portfolio_id, ticker_name, date_purchased, price, number_shares)
                           VALUES($1, $2, $3, $4, $5) RETURNING portfolio_id, _id, ticker_name, date_purchased, price, number_shares`;
 
-  const addSharesQueryValues = [portfolio_id, ticker_name, date_purchased, price, number_shares]
+  const addSharesQueryValues = [Number(portfolio_id), ticker_name, date_purchased, Math.round(Number(price)), Number(number_shares)]
+
+  console.log(addSharesQueryValues);
 
   db.query(addSharesQuery, addSharesQueryValues)
   .then(data => {

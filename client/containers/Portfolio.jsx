@@ -39,7 +39,7 @@ function Portfolio() {
     console.log(data);
 
     if (window.location.pathname === match.path) {
-      window.location.href = `${match.url}/${data.currentShares[1].portfolio_id}`;
+      window.location.href = `${match.url}/${data.chartData[1].portfolio.slice(9)}`;
     }
 
     let tempPorts = window.localStorage.getItem('spTempPorts');
@@ -110,7 +110,7 @@ function Portfolio() {
                 }}>Create New Portfolio</Button>
               </div>
               <div id="logoutDiv">
-                {historical && <Link to={`/Portfolio/${location.pathname.slice(11, 12)}`}>
+                {historical && <Link to={`/Portfolio/${location.pathname.slice(11, location.pathname.length - 8)}`}>
                   <Button variant="outline-info" block onClick={() => {
                     setHistorical(false);
                   }}>Back to Manager</Button>
@@ -423,7 +423,7 @@ function PortfolioManager(props) {
         <Button className="tableButtons" variant="outline-info" onClick={() => {
           setEditStock(true);
         }}>Edit Stock</Button>
-        <Link to={`${portID}/history`}>
+        <Link to={`${portfolioID}/history`}>
           <Button className="tableButtons" variant="outline-info" onClick={() => {
             props.setHistorical(true);
           }}>View History</Button>
