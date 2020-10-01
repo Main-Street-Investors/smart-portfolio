@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/Main-Street-Investors/smart-portfolio#readme",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.31",
+    "@fortawesome/free-brands-svg-icons": "^5.15.0",
+    "@fortawesome/react-fontawesome": "^0.1.11",
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
