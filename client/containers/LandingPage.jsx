@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 
 class LandingPage extends Component {
   constructor(props) {
@@ -25,7 +27,7 @@ class LandingPage extends Component {
                     .then(resp => {
                       window.location.href = resp.url;
                     })
-                  }}>Login with Google</Button>
+                  }}><FontAwesomeIcon icon={faGoogle}/>    Login with Google</Button>
           <div>
             <Link to="/Login">
           <Button className="space" variant="outline-info">Smart Portfolio Login</Button>
