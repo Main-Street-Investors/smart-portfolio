@@ -291,8 +291,26 @@ function PortfolioManager(props) {
         if (spTempRows[i].portfolio_id === Number(portfolioID)) {
           shareIds[spTempRows[i]._id] = true;
           let sharesLeft = spTempRows[i].number_shares;
+
+          // Check spTempSoldRows for data
+
+          let spTempSoldRows = window.localStorage.getItem('spTempSoldRows');
+
+          const soldShareIds = {};
+
+          if (spTempSoldRows) {
+            spTempSoldRows = JSON.parse(spTempSoldRows);
+            for (let j = 0; j < spTempSoldRows.length; j++) {
+              if (spTempRows[i]._id === spTempSoldRows[j].shares_id) {
+                soldShareIds[spTempSoldRows._id] = true;
+                sharesLeft -= spTempSoldRows[j].number_shares;
+              }
+            }
+          };
+
           for (let j = 0; j < props.data.soldShares.length; j++) {
-            if (spTempRows[i]._id === props.data.soldShares[j].share_id) {
+            if (soldShareIds[props.data.soldShares[j].shares_id]) continue;
+            if (spTempRows[i]._id === props.data.soldShares[j].shares_id) {
               sharesLeft -= props.data.soldShares[j].number_shares;
             }
           }
@@ -315,8 +333,27 @@ function PortfolioManager(props) {
       if (shareIds[props.data.currentShares[i]._id]) continue;
       if (props.data.currentShares[i].portfolio_id === Number(portfolioID)) {
         let sharesLeft = props.data.currentShares[i].number_shares;
+
+        // Check spTempSoldRows for data
+
+        let spTempSoldRows = window.localStorage.getItem('spTempSoldRows');
+
+        const soldShareIds = {};
+
+        if (spTempSoldRows) {
+          spTempSoldRows = JSON.parse(spTempSoldRows);
+          for (let j = 0; j < spTempSoldRows.length; j++) {
+            if (props.data.currentShares[i]._id === spTempSoldRows[j].shares_id) {
+              soldShareIds[spTempSoldRows._id] = true;
+              sharesLeft -= spTempSoldRows[j].number_shares;
+            }
+          }
+        };
+
+
         for (let j = 0; j < props.data.soldShares.length; j++) {
-          if (props.data.currentShares[i]._id === props.data.soldShares[j].share_id) {
+          if (soldShareIds[props.data.soldShares[j].shares_id]) continue;
+          if (props.data.currentShares[i]._id === props.data.soldShares[j].shares_id) {
             sharesLeft -= props.data.soldShares[j].number_shares;
           }
         }
@@ -495,7 +532,7 @@ function PortfolioManager(props) {
             })
             .then(resp => resp.json())
             .then(newRow => {
-              rows.unshift(newRow);
+              setRows([newRow, ...rows]);
               window.localStorage.setItem('spRefresh', 'true');
               let tempRows = window.localStorage.getItem('spTempRows');
               if (tempRows) tempRows = JSON.parse(tempRows);
@@ -513,7 +550,6 @@ function PortfolioManager(props) {
               setTempTags(null);
               handleNewStockClose();
             })
-
           }}>
             Submit
           </Button>
@@ -526,15 +562,65 @@ function PortfolioManager(props) {
         <Form>
           <Form.Group>
             <Form.Label>Date Sold:</Form.Label>
-            <Form.Control type="date" placeholder="29-09-2020" />
+            <Form.Control type="date" placeholder={selectedDate} onChange={e => {
+              setTempDate(e.target.value);
+            }}/>
             <Form.Label>Sell Price:</Form.Label>
-            <Form.Control type="number" min="1" placeholder="420"/>
+            <Form.Control type="number" min="1" placeholder={selectedPrice} onChange={e => {
+              setTempPrice(e.target.value);
+            }}/>
             <Form.Label># of Shares:</Form.Label>
-            <Form.Control type="number" min="1" placeholder="1"/>
+            <Form.Control type="number" min="1" placeholder={selectedNumberShares} onChange={e => {
+              setTempNumberShares(e.target.value);
+            }}/>
           </Form.Group>
         </Form>
         <Modal.Footer>
-          <Button variant="outline-info" onClick={handleSellStockClose}>
+          <Button variant="outline-info" onClick={() => {
+            fetch('/api/addSoldShares', {
+              method: 'POST',
+              body: JSON.stringify({
+                portfolio_id: portfolioID,
+                shares_id: currentShareID,
+                date_sold: tempDate,
+                sell_price: tempPrice,
+                number_shares: tempNumberShares
+              }),
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(resp => resp.json())
+            .then(newRow => {
+              const temporaryRows = Array.from(rows);
+              let spot = 0;
+              for (let i = 0; i < temporaryRows.length; i++) {
+                if (temporaryRows[i]._id === newRow.shares_id) {
+                  spot = i;
+                  break;
+                }
+              }
+              temporaryRows[spot].number_shares -= newRow.number_shares;
+              if (temporaryRows[spot].number_shares <= 0) {
+                temporaryRows.splice(spot, 1);
+              }
+              setRows(temporaryRows);
+              window.localStorage.setItem('spRefresh', 'true');
+              let tempSoldRows = window.localStorage.getItem('spTempSoldRows');
+              if (tempSoldRows) tempSoldRows = JSON.parse(tempSoldRows);
+              window.localStorage.removeItem('spTempSoldRows');
+              if (tempSoldRows) {
+                tempSoldRows.push({...newRow, ticker_name: selectedTicker});
+                window.localStorage.setItem('spTempSoldRows', JSON.stringify(tempSoldRows));
+              } else {
+                window.localStorage.setItem('spTempSoldRows', JSON.stringify([{...newRow, ticker_name: selectedTicker}]));
+              }
+              setTempDate('');
+              setTempPrice(0);
+              setTempNumberShares(0);
+              handleSellStockClose();
+            })
+          }}>
             Submit
           </Button>
         </Modal.Footer>
@@ -577,7 +663,27 @@ const PortfolioHistory = (props) => {
 
   const rows = [];
 
+  let spTempRows = window.localStorage.getItem('spTempRows');
+
+  const shareIds = {};
+
+  if (spTempRows) {
+    spTempRows = JSON.parse(spTempRows);
+    for (let i = 0; i < spTempRows.length; i++) {
+      if (spTempRows[i].portfolio_id === Number(portfolioID)) {
+        shareIds[spTempRows[i]._id] = true;
+        rows.push(<tr key={`row${i}`}>
+          <td>{spTempRows[i].ticker_name}</td>
+          <td>{spTempRows[i].date_purchased}</td>
+          <td>${spTempRows[i].price}</td>
+          <td>{spTempRows[i].number_shares}</td>
+        </tr>)
+      }
+    }
+  };
+
   for (let i = 0; i < props.data.currentShares.length; i++) {
+    if (shareIds[props.data.currentShares[i]._id]) continue;
     if (props.data.currentShares[i].portfolio_id === Number(portfolioID)) {
       rows.push(<tr key={`row${i}`}>
         <td>{props.data.currentShares[i].ticker_name}</td>
@@ -587,7 +693,31 @@ const PortfolioHistory = (props) => {
       </tr>)
     }
   }
+
+  let spTempSoldRows = window.localStorage.getItem('spTempSoldRows');
+
+  const soldShareIds = {};
+
+  if (spTempSoldRows) {
+    spTempSoldRows = JSON.parse(spTempSoldRows);
+    for (let i = 0; i < spTempSoldRows.length; i++) {
+      if (spTempSoldRows[i].portfolio_id === Number(portfolioID)) {
+        shareIds[spTempSoldRows[i]._id] = true;
+        rows.push(<tr key={`row${i}`}>
+          <td>{spTempSoldRows[i].ticker_name}</td>
+          <td></td>
+          <td></td>
+          <td>{spTempSoldRows[i].number_shares}</td>
+          <td>{spTempSoldRows[i].date_sold}</td>
+          <td>${spTempSoldRows[i].sell_price}</td>
+          <td></td>
+        </tr>)
+      }
+    }
+  };
+
   for (let i = 0; i < props.data.soldShares.length; i++) {
+    if (soldShareIds[props.data.currentShares[i]._id]) continue;
     if (props.data.soldShares[i].portfolio_id === Number(portfolioID)) {
       rows.push(<tr key={`row${i}`}>
         <td>{props.data.soldShares[i].ticker_name}</td>

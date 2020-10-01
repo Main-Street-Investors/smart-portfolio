@@ -16,7 +16,7 @@ stockController.getSoldShares = (req, res, next) => {
 
   const username = req.cookies.user;
 
-  let getSoldSharesQuery = `SELECT ss.portfolio_id, p.name, s.ticker_name, s.date_purchased, ss.sell_price, ss.date_sold, ss.number_shares
+  let getSoldSharesQuery = `SELECT ss.portfolio_id, p.name, s.ticker_name, s.date_purchased, ss.shares_id, ss._id, ss.sell_price, ss.date_sold, ss.number_shares
                             FROM users AS u
                             FULL OUTER JOIN portfolio AS p ON u._id = p.user_id
                             FULL OUTER JOIN shares AS s ON p._id = s.portfolio_id
@@ -89,7 +89,7 @@ stockController.getIEXData = (req, res, next) => {
           if (ticker === soldObj.ticker_name) {
             if ((shares - soldObj.number_shares) < 0) {
               currentHoldings[key][ticker] = 0;
-0            } else {
+             } else {
               currentHoldings[key][ticker] -= soldObj.number_shares;
             }
           }

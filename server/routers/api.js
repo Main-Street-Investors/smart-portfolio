@@ -101,7 +101,7 @@ router.get('/getPortfolio',
   router.post('/addSoldShares',
     portfolioController.addSoldSharesToPortfolio,
     (req, res) => {
-      res.sendStatus(200);
+      res.status(200).json(res.locals.newSoldShare);
     }
   )
 

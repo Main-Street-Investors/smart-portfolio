@@ -78,12 +78,13 @@ portfolioController.addSoldSharesToPortfolio = (req, res, next) => {
   const { portfolio_id, shares_id, date_sold, sell_price, number_shares } = req.body;
 
   const addSoldsharesQuery = `INSERT INTO soldshares (portfolio_id, shares_id, date_sold, sell_price, number_shares)
-                              VALUES($1, $2, $3, $4, $5)`;
+                              VALUES($1, $2, $3, $4, $5) RETURNING portfolio_id, shares_id, date_sold, sell_price, number_shares`;
 
   const addSoldsharesValues = [portfolio_id, shares_id, date_sold, sell_price, number_shares];
 
   db.query(addSoldsharesQuery, addSoldsharesValues)
-  .then(() => {
+  .then(data => {
+    res.locals.newSoldShare = data.rows[0];
     return next();
   })
   .catch(err => {
