@@ -98,6 +98,10 @@ a:hover {
   text-decoration: none !important;
 }
 
+.manageNav {
+  margin-top: 0.5rem;
+}
+
 .modal-content {
   background-color: #0c1d25;
 }
