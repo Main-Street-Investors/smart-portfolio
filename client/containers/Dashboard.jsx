@@ -33,24 +33,28 @@ class Dashboard extends Component {
   // Function to update state for Dashboard, used with either local storage cache or fresh request
   populateStateWithStockData(data) {
     console.log(data);
-    data.IEXData.map(cv => {
-      cv.data = cv.data.map(point => {
-        point.x = new Date(point.x);
-        point.x.setHours(0);
-        return point;
-      })
-      return cv;
-    });
-    data.chartData.map(cv => {
-      if (cv.data) {
+    if (data.IEXData) {
+      data.IEXData.map(cv => {
         cv.data = cv.data.map(point => {
           point.x = new Date(point.x);
           point.x.setHours(0);
           return point;
         })
-      }
-      return cv;
-    });
+        return cv;
+      });
+    }
+    if (data.chartData) {
+      data.chartData.map(cv => {
+        if (cv.data) {
+          cv.data = cv.data.map(point => {
+            point.x = new Date(point.x);
+            point.x.setHours(0);
+            return point;
+          })
+        }
+        return cv;
+      });
+    }
     const buttons = data.chartData.reduce((acc, cv, i) => {
       // Skip the first, since it's the consolidated data
       if (i === 0) return acc;
@@ -89,7 +93,7 @@ class Dashboard extends Component {
     }, []);
 
     // Calculate values for glance
-    const totalValue = data.chartData[0].data[63].y;
+    const totalValue = data.chartData[0].data[63] ? data.chartData[0].data[63].y : 0;
     const acquiredValue = data.currentShares.reduce((acc, cv) => {
       acc += cv.price * cv.number_shares;
       return acc;
@@ -103,9 +107,9 @@ class Dashboard extends Component {
     }, 0);
 
     // Create options for individual stocks modal
-    const tickerNames = data.IEXData.map(cv => {
+    const tickerNames = data.IEXData ? data.IEXData.map(cv => {
       return <option key={`ticker-${cv.ticker}`}>{cv.ticker}</option>
-    });
+    }) : [];
 
     // Store data in local storage
     if (!data.accessed) {
@@ -178,7 +182,7 @@ class Dashboard extends Component {
                   </Button>
                 </Link>
                 <Button className="dashNavBtn" variant="outline-info" block onClick={() => {
-                  const totalValue = this.state.data.chartData[0].data[63].y;
+                  const totalValue = this.state.data.chartData[0].data[63] ? this.state.data.chartData[0].data[63].y : 0;
                   const acquiredValue = this.state.data.currentShares.reduce((acc, cv) => {
                     acc += cv.price * cv.number_shares;
                     return acc;
@@ -301,7 +305,7 @@ class Dashboard extends Component {
                     <div className="glanceInfo">
                       <p className="glanceInfoText">{`${this.state.totalValue - this.state.acquiredValue < 0 ? '-' : ''}$${Math.round(Math.abs(this.state.totalValue - this.state.acquiredValue) * 100) / 100}`}</p>
                     </div>
-                    <h5>Profit</h5>
+                    <h5>Profit / Loss</h5>
                     <div className="glanceInfo">
                       <p className="glanceInfoText">{`${this.state.totalValue - this.state.acquiredValue < 0 ? '-' : ''}${this.state.totalValue - this.state.acquiredValue < 0 ? Math.round((1 - (this.state.totalValue / this.state.acquiredValue)) * 10000) / 100 : Math.round((1 - (this.state.acquiredValue / this.state.totalValue)) * 10000) / 100}%`}</p>
                     </div>
