@@ -141,6 +141,13 @@ a:hover {
 .space {
   margin: 5px;
 }
+
+.googleSpace {
+  margin: 5px;
+  background-color: rgb(40, 203, 209);
+  border: rgb(40, 203, 209);
+}
+
 .table {
   margin-bottom: 0;
 }
@@ -150,3 +157,4 @@ a:hover {
   margin-bottom: 20px;
   padding: 20px;
 }
+
