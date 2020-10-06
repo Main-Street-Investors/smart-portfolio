@@ -2,11 +2,7 @@
 
 Welcome to Smart Portfolio!
 
-Make sure to run
-```
-npm install
-```
-first.
+To get started, first run `npm install`.
 
 To start Smart Portfolio in development mode, run
 ```
