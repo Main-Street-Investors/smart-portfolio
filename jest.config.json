@@ -1,0 +1,9 @@
+{
+  "testRegex": "((\\.|/*.)(test))\\.js?$",
+  "setupFilesAfterEnv": [
+    "./jest.setup.js"
+  ],
+  "transform": {
+    "^.+\\.jsx?$": "babel-jest"
+  }
+}
