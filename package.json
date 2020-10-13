@@ -7,7 +7,7 @@
     "start": "NODE_ENV=production node server/index.js",
     "build": "NODE_ENV=production webpack",
     "dev": "NODE_ENV=development webpack-dev-server --open --hot & nodemon server/index.js",
-    "test": "jest --config ./jest.config.json && node test"
+    "test": "jest --config ./jest.config.json && node server/test | tap-spec"
   },
   "repository": {
     "type": "git",
@@ -58,6 +58,7 @@
     "sass-loader": "^10.0.2",
     "style-loader": "^1.2.1",
     "supertest": "^5.0.0",
+    "tap-spec": "^5.0.0",
     "tape": "^5.0.1",
     "url-loader": "^4.1.0",
     "webpack": "^4.44.2",
